@@ -110,6 +110,9 @@ const games = [
   { name: "퀸즈", tag: "논리 · 퍼즐", desc: "색깔 구역마다 왕관을 하나씩! 규칙을 지키며 판을 채워요.",
     url: "https://dobbi52.github.io/queens/", color: "#b18cff",
     thumb: `<div class="grid4"><span class="q1">👑</span><span class="q1"></span><span class="q2"></span><span class="q2"></span><span class="q1"></span><span class="q3"></span><span class="q2"></span><span class="q2">👑</span><span class="q3"></span><span class="q3"></span><span class="q4">👑</span><span class="q4"></span><span class="q3"></span><span class="q3">👑</span><span class="q4"></span><span class="q4"></span></div>` },
+  { name: "셈들", tag: "수학 · 계산식 추리", desc: "숨어 있는 계산식을 맞혀요. 칸 수와 기회를 골라 도전해 봐요!",
+    url: "https://dobbi52.github.io/semdle/", color: "#ffb84a",
+    thumb: `<div class="tiles"><span class="t-g">1</span><span class="t-n">2</span><span class="t-y">+</span><span class="t-y">9</span><span class="t-g">=</span><span class="t-g">8</span></div>` },
 ];
 document.getElementById("cnt").textContent = String(games.length).padStart(2, "0");
 document.getElementById("list").innerHTML = games.map((g, i) => `
