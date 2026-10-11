@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>생각 놀이터</title>
+<title>생각 오락실</title>
 <style>
   @font-face { font-family: 'Galmuri11'; src: url('https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11.woff2') format('woff2'); font-display: swap; }
   @font-face { font-family: 'Galmuri11'; font-weight: 700; src: url('https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11-Bold.woff2') format('woff2'); font-display: swap; }
@@ -27,6 +27,10 @@
     background: repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.18) 2px 4px);
   }
   .wrap { max-width: 720px; margin: 0 auto; }
+  @media (min-width: 900px) {
+    .wrap { max-width: 980px; }
+    .list { grid-template-columns: repeat(3, 1fr) !important; }
+  }
   .hud { display: flex; justify-content: space-between; font-size: 14px; color: #8f88c9; margin-bottom: 30px; }
   .hud b { color: #ffd84a; font-weight: 400; }
   header { text-align: center; margin-bottom: 40px; }
@@ -144,19 +148,63 @@
     .panel .thumb { width: 104px; height: 104px; }
   }
   .q1 { background: #9b6cff; } .q2 { background: #ff6c9e; } .q3 { background: #3fd6a8; } .q4 { background: #ffb84a; }
+
+  /* ===== 애니메이션 ===== */
+  /* 1) 제목이 위에서 떨어지며 튕기기 */
+  h1 { animation: drop .8s cubic-bezier(.3, 1.4, .5, 1) both; }
+  @keyframes drop {
+    0% { transform: translateY(-140px); opacity: 0; }
+    55% { transform: translateY(10px); opacity: 1; }
+    75% { transform: translateY(-5px); }
+    100% { transform: none; }
+  }
+  /* 2) 카드가 차례로 전원이 켜지듯 나타나기 */
+  .cab { animation: boot .55s steps(6) backwards; animation-delay: calc(.35s + var(--n) * .12s); }
+  @keyframes boot {
+    0% { transform: scale(.2, .03); opacity: 0; filter: brightness(3); }
+    40% { transform: scale(1, .03); opacity: 1; filter: brightness(3); }
+    75% { transform: scale(1, 1.05); filter: brightness(1.4); }
+    100% { transform: none; filter: none; }
+  }
+  /* 3) 네온 테두리 은은하게 깜빡이기 */
+  .cab::after {
+    content: ''; position: absolute; inset: -4px; pointer-events: none;
+    box-shadow: 0 0 22px 2px var(--c);
+    opacity: .25; animation: glow 2.8s ease-in-out infinite;
+    animation-delay: calc(var(--n) * -.6s);
+  }
+  @keyframes glow { 50% { opacity: .6; } }
+  /* 4) 안내 창이 화면 가운데에서 확 커지며 열리기 */
+  .dim.open { animation: fadeIn .2s both; }
+  @keyframes fadeIn { from { opacity: 0; } }
+  .dim.open .panel { animation: crt .34s steps(7) both; }
+  @keyframes crt {
+    0% { transform: scale(.1, .02); opacity: 0; }
+    45% { transform: scale(1, .02); opacity: 1; }
+    100% { transform: none; }
+  }
+  /* 5) 게임 시작을 누르면 화면 번쩍 */
+  #flash { position: fixed; inset: 0; z-index: 20; pointer-events: none; background: #fff; opacity: 0; }
+  #flash.go { animation: flash .45s steps(4); }
+  @keyframes flash { 0% { opacity: .9; } 50% { opacity: .35; background: var(--c, #fff); } 100% { opacity: 0; } }
+  /* 움직임 줄이기를 켠 기기에서는 애니메이션 끄기 */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="hud"><span>PLAYER 1</span><span>GAMES <b id="cnt">02</b></span></div>
+  <div class="hud"><span>THIMBLE KING</span><span>GAMES <b id="cnt">02</b></span></div>
   <header>
-    <h1>생각 놀이터</h1>
+    <h1>생각 오락실</h1>
     <p class="press">PRESS START · 궁금한 게임을 눌러 보세요</p>
   </header>
   <nav class="tabs" id="tabs"></nav>
   <main class="list" id="list"></main>
   <footer>NEW GAME COMING SOON <b>_</b></footer>
 </div>
+<div id="flash"></div>
 <div class="dim" id="dim">
   <div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="gname">
     <span class="no" id="gno"></span>
@@ -215,8 +263,8 @@ function render() {
     return `<button class="tab${t === current ? " on" : ""}" data-t="${t}">${t}<small>${n}</small></button>`;
   }).join("");
   const shown = games.map((g, i) => ({ g, i })).filter(({ g }) => current === "전체" || g.subjects.includes(current));
-  document.getElementById("list").innerHTML = shown.length ? shown.map(({ g, i }) => `
-  <button class="cab" data-i="${i}" style="--c:${g.color}">
+  document.getElementById("list").innerHTML = shown.length ? shown.map(({ g, i }, k) => `
+  <button class="cab" data-i="${i}" style="--c:${g.color};--n:${k}">
     <span class="no">GAME ${String(i + 1).padStart(2, "0")}</span>
     <div class="thumb">${g.thumb || "🎮"}</div>
     <div class="name">${g.name}</div>
@@ -243,7 +291,11 @@ $("list").addEventListener("click", e => { const c = e.target.closest(".cab"); i
 $("close").addEventListener("click", closeGame);
 $("dim").addEventListener("click", e => { if (e.target.id === "dim") closeGame(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeGame(); });
-$("gstart").addEventListener("click", () => setTimeout(closeGame, 100));   // 새 창으로 연 뒤 안내 창은 닫아 두기
+$("gstart").addEventListener("click", () => {
+  const f = $("flash"); f.style.setProperty("--c", $("panel").style.getPropertyValue("--c"));
+  f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
+  setTimeout(closeGame, 120);
+});   // 새 창으로 연 뒤 안내 창은 닫아 두기
 document.getElementById("tabs").addEventListener("click", e => {
   const b = e.target.closest(".tab"); if (!b) return;
   current = b.dataset.t;
