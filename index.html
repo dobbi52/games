@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>놀며 배우는 교실</title>
+<title>생각 놀이터</title>
 <style>
   @font-face { font-family: 'Galmuri11'; src: url('https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11.woff2') format('woff2'); font-display: swap; }
   @font-face { font-family: 'Galmuri11'; font-weight: 700; src: url('https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11-Bold.woff2') format('woff2'); font-display: swap; }
@@ -150,7 +150,7 @@
 <div class="wrap">
   <div class="hud"><span>PLAYER 1</span><span>GAMES <b id="cnt">02</b></span></div>
   <header>
-    <h1>놀며 배우는<br>교실</h1>
+    <h1>생각 놀이터</h1>
     <p class="press">PRESS START · 궁금한 게임을 눌러 보세요</p>
   </header>
   <nav class="tabs" id="tabs"></nav>
@@ -166,14 +166,14 @@
     <div class="kind" id="gkind"></div>
     <p class="about" id="gdesc"></p>
     <div class="chips" id="gtags"></div>
-    <a class="start" id="gstart" href="#">게임 시작</a>
+    <a class="start" id="gstart" href="#" target="_blank" rel="noopener">게임 시작</a>
   </div>
 </div>
 <script>
 // ▼ 게임 추가는 여기에 한 덩어리씩 넣으면 됩니다.
 //   subjects: 교과(여러 개 가능) / type: 놀이 방식 / tags: 작은 표시
 const games = [
-  { name: "꼬들 챌린지", subjects: ["국어"], type: "낱말 추리",
+  { name: "꼬들", subjects: ["국어"], type: "낱말 추리",
     desc: "한글 자모 6칸으로 숨은 낱말을 맞혀요. 친구들과 순위 경쟁도!",
     tags: ["순위표", "고학년 추천"],
     url: "https://dobbi52.github.io/kordle-challenge/", color: "#6ef28a",
@@ -243,6 +243,7 @@ $("list").addEventListener("click", e => { const c = e.target.closest(".cab"); i
 $("close").addEventListener("click", closeGame);
 $("dim").addEventListener("click", e => { if (e.target.id === "dim") closeGame(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeGame(); });
+$("gstart").addEventListener("click", () => setTimeout(closeGame, 100));   // 새 창으로 연 뒤 안내 창은 닫아 두기
 document.getElementById("tabs").addEventListener("click", e => {
   const b = e.target.closest(".tab"); if (!b) return;
   current = b.dataset.t;
