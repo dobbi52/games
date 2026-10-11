@@ -187,10 +187,6 @@
   #flash { position: fixed; inset: 0; z-index: 20; pointer-events: none; background: #fff; opacity: 0; }
   #flash.go { animation: flash .45s steps(4); }
   @keyframes flash { 0% { opacity: .9; } 50% { opacity: .35; background: var(--c, #fff); } 100% { opacity: 0; } }
-  /* 움직임 줄이기를 켠 기기에서는 애니메이션 끄기 */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-  }
 </style>
 </head>
 <body>
