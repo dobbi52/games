@@ -145,6 +145,17 @@
   .pair span { width: 24px; height: 24px; display: grid; place-items: center; font-size: 14px; font-weight: 700; color: #d9f2ff; background: #24406b; border: 2px solid #3a6aa8; }
   .pair span.on { background: #5ec8ff; border-color: #bfeaff; color: #14112b; }
   @media (max-width: 600px) {
+    /* 휴대폰: 윗부분 줄이기 */
+    .hud { font-size: 12px; margin-bottom: 18px; }
+    header { margin-bottom: 20px; }
+    .press { margin-top: 12px; font-size: 16px; }
+    .press-more { display: none; }
+    .tabs { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; gap: 7px;
+            margin: 0 -16px 26px; padding: 0 16px 8px; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { flex: 0 0 auto; font-size: 14px; padding: 7px 10px; box-shadow: 3px 3px 0 #0a0818; }
+    .tab small { font-size: 12px; margin-left: 3px; }
+    .tabs::before, .tabs::after { content: ''; flex: 1 0 0; }   /* 한 줄에 들어가면 가운데 정렬 */
     .pair { grid-template-columns: repeat(3, 21px); }
     .pair span { width: 21px; height: 21px; font-size: 12px; }
     body { padding-top: 28px; }
@@ -208,7 +219,7 @@
   <div class="hud"><span>THIMBLE KING</span><span>GAMES <b id="cnt">02</b></span></div>
   <header>
     <h1>생각 오락실</h1>
-    <p class="press">PRESS START · 궁금한 게임을 눌러 보세요</p>
+    <p class="press">PRESS START<span class="press-more"> · 궁금한 게임을 눌러 보세요</span></p>
   </header>
   <nav class="tabs" id="tabs"></nav>
   <main class="list" id="list"></main>
