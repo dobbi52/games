@@ -129,6 +129,17 @@
   @keyframes nudge { 50% { transform: translateX(6px); } }
   @keyframes shine { to { left: calc(100% + 30px); } }
   .start:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 #0a0818; }
+  .score {
+    display: flex; justify-content: center; gap: 14px; margin-top: 44px;
+  }
+  .score[hidden] { display: none; }
+  .score div {
+    background: #0d0b20; border: 3px solid #3a3470; box-shadow: 4px 4px 0 #0a0818;
+    padding: 8px 16px; display: flex; align-items: baseline; gap: 10px;
+  }
+  .score span { font-size: 13px; color: #8f88c9; }
+  .score b { font-size: 22px; color: #ffd84a; letter-spacing: .08em; text-shadow: 0 0 8px rgba(255, 216, 74, .5); }
+  .score + footer { margin-top: 22px; }
   footer { text-align: center; margin-top: 44px; font-size: 14px; color: #8f88c9; }
   footer b { color: #6ef2d3; font-weight: 400; animation: blink 1.1s steps(1) infinite; }
 
@@ -226,6 +237,10 @@
   </header>
   <nav class="tabs" id="tabs"></nav>
   <main class="list" id="list"></main>
+  <div class="score" id="score" hidden>
+    <div><span>TODAY</span><b id="sToday">---</b></div>
+    <div><span>TOTAL</span><b id="sTotal">-----</b></div>
+  </div>
   <footer>NEW GAME COMING SOON <b>_</b></footer>
 </div>
 <div id="flash"></div>
@@ -301,6 +316,27 @@ function render() {
   </button>`).join("") : `<p class="empty">아직 게임이 없어요</p>`;
 }
 const $ = id => document.getElementById(id);
+
+// ▼ 방문 기록: Apps Script 웹 앱 주소를 따옴표 안에 붙여 넣으세요. 비워 두면 점수판이 숨겨져요.
+const STATS_URL = "https://script.google.com/macros/s/AKfycbx15D4z15tGhs9bwd_q1EVMZJI1dUk3DV0gqhj1NR81I4c682KZ3HjiLydNoCDAGBLg5A/exec";
+const kstDay = () => new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
+const pad = (n, w) => String(Math.min(n, 10 ** w - 1)).padStart(w, "0");
+function showStats(d) {
+  if (!d || typeof d.today !== "number") return;
+  $("sToday").textContent = pad(d.today, 3);
+  $("sTotal").textContent = pad(d.total, 5);
+}
+if (STATS_URL) {
+  $("score").hidden = false;
+  let first = true;                                     // 이 기기에서 오늘 처음 열었는지
+  try { first = localStorage.getItem("visitDay") !== kstDay(); localStorage.setItem("visitDay", kstDay()); } catch (e) {}
+  fetch(STATS_URL + "?action=visit&first=" + (first ? 1 : 0))
+    .then(r => r.json()).then(showStats).catch(() => {});
+}
+function logStart(name) {
+  if (!STATS_URL) return;
+  try { fetch(STATS_URL + "?action=start&game=" + encodeURIComponent(name), { mode: "no-cors", keepalive: true }); } catch (e) {}
+}
 let lastCab = null;
 function openGame(i, from) {
   const g = games[i]; lastCab = from;
@@ -321,6 +357,7 @@ $("close").addEventListener("click", closeGame);
 $("dim").addEventListener("click", e => { if (e.target.id === "dim") closeGame(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeGame(); });
 $("gstart").addEventListener("click", () => {
+  logStart($("gname").textContent);
   const f = $("flash"); f.style.setProperty("--c", $("panel").style.getPropertyValue("--c"));
   f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
   setTimeout(closeGame, 120);
