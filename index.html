@@ -141,6 +141,9 @@
   .m24 span { width: 30px; height: 30px; display: grid; place-items: center; font-size: 16px; font-weight: 700; color: #14112b; background: #ffd84a; box-shadow: 2px 2px 0 #b8901a; }
   .m24 span:nth-child(2), .m24 span:nth-child(3) { background: #ff7aa8; box-shadow: 2px 2px 0 #b8456c; }
   .m24 b { position: absolute; right: -14px; bottom: -12px; background: #6ef2d3; color: #14112b; font-size: 13px; padding: 1px 4px; box-shadow: 2px 2px 0 #0a0818; }
+  .xylo { display: flex; align-items: center; gap: 4px; }
+  .xylo span { width: 13px; height: var(--h); background: var(--b); color: #14112b; font-size: 10px; font-weight: 700;
+    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 3px; box-shadow: 2px 2px 0 #0a0818; }
   .pair { display: grid; grid-template-columns: repeat(3, 24px); gap: 4px; }
   .pair span { width: 24px; height: 24px; display: grid; place-items: center; font-size: 14px; font-weight: 700; color: #d9f2ff; background: #24406b; border: 2px solid #3a6aa8; }
   .pair span.on { background: #5ec8ff; border-color: #bfeaff; color: #14112b; }
@@ -150,11 +153,11 @@
     header { margin-bottom: 20px; }
     .press { margin-top: 12px; font-size: 16px; }
     .press-more { display: none; }
-    .tabs { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; gap: 7px;
+    .tabs { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; gap: 5px;
             margin: 0 -16px 26px; padding: 0 16px 8px; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
-    .tab { flex: 0 0 auto; font-size: 14px; padding: 7px 10px; box-shadow: 3px 3px 0 #0a0818; }
-    .tab small { font-size: 12px; margin-left: 3px; }
+    .tab { flex: 0 0 auto; font-size: 13px; padding: 7px 7px; box-shadow: 3px 3px 0 #0a0818; }
+    .tab small { font-size: 11px; margin-left: 2px; }
     .tabs::before, .tabs::after { content: ''; flex: 1 0 0; }   /* 한 줄에 들어가면 가운데 정렬 */
     .pair { grid-template-columns: repeat(3, 21px); }
     .pair span { width: 21px; height: 21px; font-size: 12px; }
@@ -267,6 +270,11 @@ const games = [
     tags: ["시간 도전", "힌트 3번", "순위표"],
     url: "https://dobbi52.github.io/jjakkung/", color: "#5ec8ff",
     thumb: `<div class="pair"><span>7</span><span class="on">3</span><span>5</span><span>2</span><span class="on">7</span><span>9</span><span>4</span><span>6</span><span>1</span></div>` },
+  { name: "가락 꼬들", subjects: ["음악"], type: "가락 추리",
+    desc: "노래 가락을 듣고 계이름을 맞혀요. 제출해야 소리가 들리니 귀를 쫑긋! 맞힌 자리는 초록, 다른 자리에 있으면 노랑으로 알려 줘요. 문제를 풀면 고양이 친구를 모을 수 있어요.",
+    tags: ["오늘의 가락", "고양이 모으기", "고수 모드"],
+    url: "https://dobbi52.github.io/garak/", color: "#ffe156",
+    thumb: `<div class="xylo"><span style="--h:46px;--b:#ff6c6c">솔</span><span style="--h:40px;--b:#ffb84a">미</span><span style="--h:40px;--b:#ffb84a">미</span><span style="--h:34px;--b:#6ef28a">파</span><span style="--h:28px;--b:#5ec8ff">레</span></div>` },
 ];
 
 // ▼ 탭 순서 (게임이 있는 교과만 화면에 나타나요)
