@@ -72,6 +72,15 @@
   }
   .cab:hover, .cab:focus-visible { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #0a0818, 0 0 26px var(--c); outline: none; }
   .cab:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0 #0a0818; }
+  .grade {
+    display: inline-block; margin-top: 10px;
+    font-size: 13px; font-weight: 700; color: #ffd84a;
+    border: 2px solid #ffd84a; background: rgba(255, 216, 74, .1);
+    padding: 3px 10px; box-shadow: 2px 2px 0 #0a0818;
+  }
+  .grade::before { content: '★ '; font-size: 11px; }
+  .cab .grade + .chips { margin-top: 10px; }
+  .panel .grade { margin-top: 12px; }
   .no i { font-style: normal; }
   .badge {
     position: absolute; top: -14px; right: 14px; z-index: 2;
@@ -91,6 +100,9 @@
   }
   .name { font-size: 24px; font-weight: 700; margin-top: 16px; }
   .cab .chips { justify-content: center; }
+  .chips.one { flex-wrap: nowrap; max-width: 100%; overflow: hidden; }
+  .chips.one span { flex: 0 0 auto; }
+
 
   /* 게임 안내 창 */
   .dim { position: fixed; inset: 0; z-index: 10; background: rgba(8, 6, 20, .78); display: none; place-items: center; padding: 16px; }
@@ -187,7 +199,9 @@
     .pair span { width: 21px; height: 21px; font-size: 12px; }
     body { padding-top: 28px; }
     .list { gap: 26px 14px; }
-    .cab { padding: 26px 10px 16px; }
+    .cab { padding: 26px 6px 16px; }
+    .chips.one { gap: 4px; }
+    .chips.one span { padding: 2px 4px; }
     .thumb { width: 84px; height: 84px; }
     .tiles { grid-template-columns: repeat(3, 20px); gap: 4px; }
     .tiles span { width: 20px; height: 20px; font-size: 12px; }
@@ -197,6 +211,7 @@
     .m24 span { width: 26px; height: 26px; font-size: 14px; }
     .name { font-size: 18px; margin-top: 12px; }
     .chips span { font-size: 11px; padding: 2px 6px; }
+    .grade { font-size: 12px; padding: 2px 8px; margin-top: 8px; }
     .panel .thumb { width: 104px; height: 104px; }
   }
   .q1 { background: #9b6cff; } .q2 { background: #ff6c9e; } .q3 { background: #3fd6a8; } .q4 { background: #ffb84a; }
@@ -264,6 +279,7 @@
     <div class="thumb" id="gthumb"></div>
     <h2 id="gname"></h2>
     <div class="kind" id="gkind"></div>
+    <div id="ggrade"></div>
     <p class="about" id="gdesc"></p>
     <div class="chips" id="gtags"></div>
     <a class="start" id="gstart" href="#" target="_blank" rel="noopener">게임 시작</a>
@@ -271,35 +287,36 @@
 </div>
 <script>
 // ▼ 게임 추가는 여기에 한 덩어리씩 넣으면 됩니다.
-//   subjects: 교과(여러 개 가능) / type: 놀이 방식 / tags: 작은 표시
+//   subjects: 교과(여러 개 가능) / type: 놀이 방식 / tags: 작은 표시 (카드에는 앞의 2개만, 안내 창에는 전부)
+//   grade: 알맞은 학년 [처음, 끝] — 예: [3, 6] → 3~6학년, [5, 6] → 5~6학년
 //   added: 허브에 넣은 날짜(예: "2026-10-12") — 넣으면 2주 동안 NEW 배지가 붙어요
 const games = [
-  { name: "꼬들", subjects: ["국어"], type: "낱말 추리",
+  { name: "꼬들", grade: [3, 6], subjects: ["국어"], type: "낱말 추리",
     desc: "한글 자모 6칸으로 숨은 낱말을 맞혀요. 친구들과 순위 경쟁도!",
-    tags: ["순위표", "고학년 추천"],
+    tags: ["순위표", "챌린지"],
     url: "https://dobbi52.github.io/kordle-challenge/", color: "#6ef28a",
     thumb: `<div class="tiles"><span class="t-g">ㄱ</span><span class="t-n">ㅏ</span><span class="t-y">ㅇ</span><span class="t-y">ㅇ</span><span class="t-g">ㅜ</span><span class="t-n">ㄹ</span></div>` },
-  { name: "퀸즈", subjects: ["생각 놀이"], type: "퍼즐",
+  { name: "퀸즈", grade: [3, 6], subjects: ["생각 놀이"], type: "퍼즐",
     desc: "색깔 구역마다 왕관을 하나씩! 규칙을 지키며 판을 채워요.",
-    tags: ["오늘의 퍼즐", "연습 모드", "순위표"],
+    tags: ["오늘의 퍼즐", "순위표", "연습 모드"],
     url: "https://dobbi52.github.io/queens/", color: "#b18cff",
     thumb: `<div class="grid4"><span class="q1">👑</span><span class="q1"></span><span class="q2"></span><span class="q2"></span><span class="q1"></span><span class="q3"></span><span class="q2"></span><span class="q2">👑</span><span class="q3"></span><span class="q3"></span><span class="q4">👑</span><span class="q4"></span><span class="q3"></span><span class="q3">👑</span><span class="q4"></span><span class="q4"></span></div>` },
-  { name: "셈들", subjects: ["수학", "생각 놀이"], type: "계산식 추리",
+  { name: "셈들", grade: [3, 6], subjects: ["수학", "생각 놀이"], type: "계산식 추리",
     desc: "숨어 있는 계산식을 맞혀요. 칸 수와 기회를 골라 도전해 봐요!",
-    tags: ["난이도 조절"],
+    tags: ["난이도 조절", "계속 풀기"],
     url: "https://dobbi52.github.io/semdle/", color: "#ffb84a",
     thumb: `<div class="tiles"><span class="t-g">1</span><span class="t-n">2</span><span class="t-y">+</span><span class="t-y">9</span><span class="t-g">=</span><span class="t-g">8</span></div>` },
-  { name: "24 만들기", subjects: ["수학", "생각 놀이"], type: "사칙연산 퍼즐",
+  { name: "24 만들기", grade: [3, 6], subjects: ["수학", "생각 놀이"], type: "사칙연산 퍼즐",
     desc: "숫자 4개를 더하고 빼고 곱하고 나눠서 24를 만들어요. 시간 안에 몇 문제나 풀 수 있을까?",
-    tags: ["연습 모드", "시간 도전", "순위표"],
+    tags: ["시간 도전", "순위표", "연습 모드"],
     url: "https://dobbi52.github.io/make24/", color: "#ff7aa8",
     thumb: `<div class="m24"><span>3</span><span>8</span><span>4</span><span>6</span><b>24</b></div>` },
-  { name: "숫자 짝꿍", subjects: ["수학", "생각 놀이"], type: "숫자 짝 찾기",
+  { name: "숫자 짝꿍", grade: [1, 6], subjects: ["수학", "생각 놀이"], type: "숫자 짝 찾기",
     desc: "같은 수끼리, 또는 더해서 10이 되는 수끼리 짝을 지어 지워요. 바로 옆이나 빈칸으로 이어진 타일만 짝이 될 수 있어요. 한 줄을 지우면 시간이 늘어나요!",
-    tags: ["시간 도전", "힌트 3번", "순위표"],
+    tags: ["시간 도전", "순위표", "힌트 3번"],
     url: "https://dobbi52.github.io/jjakkung/", color: "#5ec8ff",
     thumb: `<div class="pair"><span>7</span><span class="on">3</span><span>5</span><span>2</span><span class="on">7</span><span>9</span><span>4</span><span>6</span><span>1</span></div>` },
-  { name: "가락 꼬들", subjects: ["음악"], type: "가락 추리", added: "2026-10-12",
+  { name: "가락 꼬들", grade: [3, 6], subjects: ["음악"], type: "가락 추리", added: "2026-10-12",
     desc: "노래 가락을 듣고 계이름을 맞혀요. 제출해야 소리가 들리니 귀를 쫑긋! 맞힌 자리는 초록, 다른 자리에 있으면 노랑으로 알려 줘요. 문제를 풀면 고양이 친구를 모을 수 있어요.",
     tags: ["오늘의 가락", "고양이 모으기", "고수 모드"],
     url: "https://dobbi52.github.io/garak/", color: "#ffe156",
@@ -314,6 +331,8 @@ const subjects = ORDER.filter(s => games.some(g => g.subjects.includes(s)))
 let current = decodeURIComponent(location.hash.slice(1));
 if (!subjects.includes(current)) current = "전체";
 
+const gradeLabel = g => g.grade ? (g.grade[0] === g.grade[1] ? `${g.grade[0]}학년` : `${g.grade[0]}~${g.grade[1]}학년`) : "";
+const gradeHTML = g => g.grade ? `<div class="grade">${gradeLabel(g)}</div>` : "";
 function render() {
   const tabs = ["전체", ...subjects];
   document.getElementById("tabs").innerHTML = tabs.map(t => {
@@ -326,10 +345,28 @@ function render() {
     <span class="no"><i>GAME </i>${String(i + 1).padStart(2, "0")}</span>
     <div class="thumb">${g.thumb || "🎮"}</div>
     <div class="name">${g.name}</div>
-    ${g.tags && g.tags.length ? `<div class="chips">${g.tags.map(t => `<span>${t}</span>`).join("")}</div>` : ""}
+    ${gradeHTML(g)}
+    ${g.tags && g.tags.length ? `<div class="chips one">${g.tags.slice(0, 2).map(t => `<span>${t}</span>`).join("")}</div>` : ""}
   </button>`).join("") : `<p class="empty">아직 게임이 없어요</p>`;
   applyBadges();
+  fitTags();
 }
+
+// ▼ 카드 태그는 한 줄에 2개: 넘치면 글자를 조금씩 줄여서 맞추기
+function fitTags() {
+  document.querySelectorAll(".chips.one").forEach(row => {
+    row.style.fontSize = "";
+    const tags = [...row.children];
+    tags.forEach(t => t.style.fontSize = "");
+    let size = parseFloat(getComputedStyle(tags[0]).fontSize);
+    while (row.scrollWidth > row.clientWidth + 1 && size > 8) {
+      size -= 0.5;
+      tags.forEach(t => { t.style.fontSize = size + "px"; t.style.paddingLeft = t.style.paddingRight = (size < 10 ? 3 : 4) + "px"; });
+    }
+  });
+}
+addEventListener("resize", () => { clearTimeout(fitTags.t); fitTags.t = setTimeout(fitTags, 120); });
+if (document.fonts) document.fonts.ready.then(fitTags);
 
 // ▼ 인기 배지: TODAY'S BEST(오늘 1위) → HOT(이번 주 상위) → NEW(추가 2주) 순으로 하나만 붙여요
 let badgeInfo = { todayBest: null, hot: [] };
@@ -404,6 +441,7 @@ function openGame(i, from) {
   $("gname").textContent = g.name;
   $("gkind").textContent = g.subjects.join(" · ") + " · " + g.type;
   $("gdesc").textContent = g.desc;
+  $("ggrade").innerHTML = gradeHTML(g);
   $("gtags").innerHTML = (g.tags || []).map(t => `<span>${t}</span>`).join("");
   $("gstart").href = g.url;
   $("dim").classList.add("open");
