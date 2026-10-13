@@ -82,8 +82,8 @@
   .cab .grade + .chips { margin-top: 10px; }
   .panel .grade { margin-top: 12px; }
   .no i { font-style: normal; }
+  .badges { position: absolute; top: -14px; right: 14px; z-index: 2; display: flex; gap: 5px; }
   .badge {
-    position: absolute; top: -14px; right: 14px; z-index: 2;
     font-size: 12px; font-weight: 700; padding: 3px 8px; white-space: nowrap;
     box-shadow: 3px 3px 0 #0a0818;
   }
@@ -183,7 +183,8 @@
   @media (max-width: 600px) {
     .no { font-size: 11px; left: 8px; padding: 3px 6px; }
     .cab .no i { display: none; }   /* 휴대폰 카드에서는 번호만 (배지 자리 확보) */
-    .badge { font-size: 10px; right: 6px; padding: 3px 5px; }
+    .badges { right: 6px; gap: 3px; }
+    .badge { font-size: 10px; padding: 3px 5px; }
     /* 휴대폰: 윗부분 줄이기 */
     .hud { font-size: 12px; margin-bottom: 18px; }
     header { margin-bottom: 20px; }
@@ -368,22 +369,29 @@ function fitTags() {
 addEventListener("resize", () => { clearTimeout(fitTags.t); fitTags.t = setTimeout(fitTags, 120); });
 if (document.fonts) document.fonts.ready.then(fitTags);
 
-// ▼ 인기 배지: TODAY'S BEST(오늘 1위) → HOT(이번 주 상위) → NEW(추가 2주) 순으로 하나만 붙여요
+// ▼ 인기 배지: 해당하는 배지를 모두 붙여요 (TODAY'S BEST · HOT · NEW)
 let badgeInfo = { todayBest: null, hot: [] };
-function badgeOf(g) {
-  if (badgeInfo.todayBest === g.name) return ["today", "TODAY'S BEST"];
-  if ((badgeInfo.hot || []).includes(g.name)) return ["hot", "HOT"];
+function badgesOf(g) {
+  const out = [];
+  if (badgeInfo.todayBest === g.name) out.push(["today", "TODAY'S BEST", "BEST"]);
+  if ((badgeInfo.hot || []).includes(g.name)) out.push(["hot", "HOT", "HOT"]);
   if (g.added) {
     const days = (Date.parse(new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" })) - Date.parse(g.added)) / 864e5;
-    if (days >= 0 && days < 14) return ["new", "NEW"];
+    if (days >= 0 && days < 14) out.push(["new", "NEW", "NEW"]);
   }
-  return null;
+  return out;
 }
 function applyBadges() {
   document.querySelectorAll(".cab").forEach(c => {
-    const old = c.querySelector(".badge"); if (old) old.remove();
-    const b = badgeOf(games[+c.dataset.i]);
-    if (b) c.insertAdjacentHTML("beforeend", `<span class="badge b-${b[0]}">${b[1]}</span>`);
+    const old = c.querySelector(".badges"); if (old) old.remove();
+    const list = badgesOf(games[+c.dataset.i]);
+    if (!list.length) return;
+    c.insertAdjacentHTML("beforeend", `<span class="badges">${list.map(b =>
+      `<span class="badge b-${b[0]}" data-short="${b[2]}">${b[1]}</span>`).join("")}</span>`);
+    // 카드가 좁아 GAME 번호와 겹치면 TODAY'S BEST → BEST 로 줄이기
+    const box = c.querySelector(".badges"), no = c.querySelector(".no");
+    if (box.offsetLeft < no.offsetLeft + no.offsetWidth + 4)       // 애니메이션 중에도 정확하도록 offset 사용
+      box.querySelectorAll(".badge").forEach(b => b.textContent = b.dataset.short);
   });
 }
 const $ = id => document.getElementById(id);
