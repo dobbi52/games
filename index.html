@@ -616,8 +616,8 @@ function showAccount(a) {
   const n = $("notice");
   n.hidden = false;
   n.innerHTML = a
-    ? `<b>통합 계정</b>으로 꼬들·셈들·가락 꼬들·퀸즈를 모두 이어서 해요. 게임마다 하던 예전 로그인은 <b>${AA.OLD_END}</b>까지만 돼요.<button type="button" data-acc>내 계정</button>`
-    : `<b>NEW!</b> 이제 여기서 <b>한 번만 로그인</b>하면 꼬들·셈들·가락 꼬들·퀸즈를 이어서 해요. 예전에 쓰던 닉네임과 비밀번호로 가입하면 기록도 그대로! 게임마다 하던 로그인은 <b>${AA.OLD_END}</b>까지만 돼요.<button type="button" data-acc>로그인 · 가입</button>`;
+    ? `<b>통합 계정</b>으로 꼬들·셈들·가락 꼬들·퀸즈를 모두 이어서 해요.<br>게임마다 하던 예전 로그인은 <b>${AA.OLD_END}</b>까지만 돼요.<button type="button" data-acc>내 계정</button>`
+    : `<b>NEW!</b> 이제 여기서 <b>한 번만 로그인</b>하면 꼬들·셈들·가락 꼬들·퀸즈를 이어서 해요.<br>예전에 쓰던 닉네임과 비밀번호로 가입하면 기록도 그대로!<br>게임마다 하던 로그인은 <b>${AA.OLD_END}</b>까지만 돼요.<button type="button" data-acc>로그인 · 가입</button>`;
   n.querySelector("[data-acc]").addEventListener("click", () => AA.open({}));
   if (curGame) needNote(curGame);
 }
