@@ -97,12 +97,14 @@
 .aa-games li span{flex:1;min-width:0;font-size:12px;color:#8f88c9;overflow-wrap:anywhere}
 .aa-games li.on{border-color:#6ef28a}
 .aa-games li.on span{color:#6ef28a}
+.aa-games li.aa-need{border-color:#ffd84a}
+.aa-games li.aa-need span{color:#ffd84a}
 .aa-games li.new{animation:aaHit .5s steps(2) 3}
 @keyframes aaHit{50%{background:#2a5a3a}}
 .aa-games li button{flex:none;font-size:11px;font-weight:700;cursor:pointer;background:#1f1a45;color:#ffd84a;border:2px solid #ffd84a;padding:5px 7px}
 @media (prefers-reduced-motion:reduce){.aa-box,.aa-games li.new{animation:none}}
 `;
-  let dim = null, box = null, opts = {}, view = 'login', note = '', fresh = [], linkGame = '';
+  let dim = null, box = null, opts = {}, view = 'login', note = '', fresh = [], need = [], linkGame = '';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const josa = (w, a, b) => { const c = w.charCodeAt(w.length - 1) - 0xAC00; return w + (c >= 0 && c <= 11171 && c % 28 ? a : b); };
 
@@ -120,9 +122,15 @@
     setup();
     opts = o || {};
     box.style.setProperty('--c', opts.color || '#ffd84a');
-    view = get() ? 'me' : 'login'; note = ''; fresh = [];
+    view = get() ? 'me' : 'login'; note = ''; fresh = []; need = [];
     draw();
     dim.classList.add('open');
+    const cur = get();
+    if (cur) call('login', { nick: cur.nick, pin: cur.pin }).then(j => {   // 비밀번호가 달라 연결이 필요한 게임 다시 확인
+      if (!j || !j.ok || get() === null || get().nick !== cur.nick) return;
+      keep(j, cur.pin); need = j.needLink || [];
+      if (dim.classList.contains('open') && view === 'me') draw();
+    });
   }
   function close() { if (dim) dim.classList.remove('open'); if (opts.onClose) opts.onClose(); }
 
@@ -150,6 +158,8 @@
       h += `<h2>1P ${esc(a.nick)}</h2><p class="aa-sub">게임별 기록 연결</p>${head}
         <ul class="aa-games">${GAMES.map(([k, n]) => L[k]
           ? `<li class="on${fresh.indexOf(k) >= 0 ? ' new' : ''}"><b>${n}</b><span>✓ ${L[k] === a.nick ? '예전 기록 이어짐' : esc(L[k]) + ' 기록 이어짐'}</span></li>`
+          : need.indexOf(k) >= 0
+          ? `<li class="aa-need"><b>${n}</b><span>비밀번호가 달라요</span><button data-a="link" data-g="${k}">${n} 비밀번호로 연결</button></li>`
           : `<li><b>${n}</b><span>새로 시작</span><button data-a="link" data-g="${k}">예전 닉네임 연결</button></li>`).join('')}</ul>
         <p class="aa-note">· <b>새로 시작</b>인 게임은 그냥 하면 이 닉네임으로 새로 시작해요.<br>· 그 게임에서 다른 닉네임을 썼다면 <b>예전 닉네임 연결</b>로 기록을 가져와요.<br>· 순위표에는 이제 <b>${esc(a.nick)}</b>(으)로 보여요.</p>
         ${opts.onPlay ? `<button class="aa-btn main" data-a="play">▶ ${esc(opts.gameName || '게임')} 시작</button>` : ''}
@@ -158,7 +168,7 @@
       const n = gameName(linkGame);
       h += `<h2>기록 가져오기</h2><p class="aa-sub">${esc(n)}에서 쓰던 닉네임과 비밀번호를 넣어요</p>
         <label for="aaOld">${esc(n)} 닉네임</label>
-        <input id="aaOld" maxlength="10" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <input id="aaOld" maxlength="10" autocomplete="off" autocapitalize="off" spellcheck="false" value="${need.indexOf(linkGame) >= 0 && a ? esc(a.nick) : ''}">
         <label for="aaOldPin">${esc(n)} 비밀번호<small>숫자 4자리</small></label>
         <input id="aaOldPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
         <p class="aa-msg" id="aaMsg">${esc(note)}</p>
@@ -197,8 +207,10 @@
       const j = su ? await signup(nick, pin) : await login(nick, pin);
       if (!j.ok) { busy(false); return msg(j.error || '잠시 뒤 다시 해 주세요.'); }
       fresh = j.autoLinked || [];
+      need = j.needLink || [];
       const names = fresh.map(gameName);
       note = (su ? '가입 완료! ' : '') + (names.length ? names.join(', ') + ' 예전 기록을 찾아서 이어 붙였어요.' : (su ? '' : '어서 와요!'));
+      if (need.length) note += ' ' + need.map(gameName).join('·') + '에도 같은 닉네임이 있는데 비밀번호가 달라요. 아래에서 그 게임 비밀번호로 연결해 주세요.';
       view = 'me';
       return draw();
     }
@@ -210,6 +222,7 @@
       const j = await link(linkGame, oldNick, oldPin);
       if (!j.ok) { busy(false); return msg(j.error || '잠시 뒤 다시 해 주세요.'); }
       fresh = [linkGame];
+      need = need.filter(k => k !== linkGame);
       note = gameName(linkGame) + ' 예전 기록을 이어 붙였어요!';
       view = 'me';
       return draw();
