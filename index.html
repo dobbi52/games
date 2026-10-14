@@ -53,6 +53,8 @@
     font-size: 14px; line-height: 1.7; color: #f2f0ff;
   }
   .notice b { color: #ffd84a; }
+  .notice .ch { display: inline-block; }
+  .notice br.m { display: none; }
   .notice button {
     font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; margin-left: 6px;
     background: #ffd84a; color: #14112b; border: 0; padding: 3px 9px; box-shadow: 2px 2px 0 #0a0818;
@@ -253,7 +255,9 @@
     .hud { font-size: 12px; margin-bottom: 18px; }
     .qr-btn { display: none; }   /* 휴대폰에서는 QR 버튼 숨김 */
     .p1-btn { font-size: 12px; padding: 6px 8px; max-width: 120px; }
-    .notice { font-size: 13px; margin: -6px 0 22px; padding: 10px; }
+    .notice { font-size: 13px; margin: -6px 0 22px; padding: 10px 8px; line-height: 1.75; }
+    .notice br.m { display: inline; }
+    .notice button { margin: 6px 0 0; }
     .need { font-size: 10px; padding: 1px 5px; bottom: -11px; }
     header { margin-bottom: 20px; }
     .press { margin-top: 12px; font-size: 16px; }
@@ -615,9 +619,10 @@ function showAccount(a) {
   b.textContent = a ? "1P " + a.nick : "1P LOGIN";
   const n = $("notice");
   n.hidden = false;
+  const c = t => `<span class="ch">${t}</span>`;   // 덩어리 단위로만 줄이 바뀌게
   n.innerHTML = a
-    ? `<b>통합 계정</b>으로 꼬들·셈들·가락 꼬들·퀸즈를 모두 이어서 해요.<br>게임마다 하던 예전 로그인은 <b>${AA.OLD_END}</b>까지만 돼요.<button type="button" data-acc>내 계정</button>`
-    : `<b>NEW!</b> 이제 여기서 <b>한 번만 로그인</b>하면 꼬들·셈들·가락 꼬들·퀸즈를 이어서 해요.<br>예전에 쓰던 닉네임과 비밀번호로 가입하면 기록도 그대로!<br>게임마다 하던 로그인은 <b>${AA.OLD_END}</b>까지만 돼요.<button type="button" data-acc>로그인 · 가입</button>`;
+    ? `${c("<b>통합 계정</b>으로")} ${c("꼬들·셈들·가락 꼬들·퀸즈를")} ${c("모두 이어서 해요.")}<br>${c("게임마다 하던 예전 로그인은")} ${c(`<b>${AA.OLD_END}</b>까지만 돼요.`)} <button type="button" data-acc>내 계정</button>`
+    : `${c("<b>NEW!</b> 이제 여기서")} ${c("<b>한 번만 로그인</b>하면")} <br class="m">${c("꼬들·셈들·가락 꼬들·퀸즈를")} ${c("이어서 해요.")}<br>${c("예전에 쓰던 닉네임과 비밀번호로")} ${c("가입하면 기록도 그대로!")}<br>${c("게임마다 하던 로그인은")} ${c(`<b>${AA.OLD_END}</b>까지만 돼요.`)} <button type="button" data-acc>로그인 · 가입</button>`;
   n.querySelector("[data-acc]").addEventListener("click", () => AA.open({}));
   if (curGame) needNote(curGame);
 }
