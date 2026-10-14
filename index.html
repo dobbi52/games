@@ -240,6 +240,8 @@
   .m24 span { width: 30px; height: 30px; display: grid; place-items: center; font-size: 16px; font-weight: 700; color: #14112b; background: #ffd84a; box-shadow: 2px 2px 0 #b8901a; }
   .m24 span:nth-child(2), .m24 span:nth-child(3) { background: #ff7aa8; box-shadow: 2px 2px 0 #b8456c; }
   .m24 b { position: absolute; right: -14px; bottom: -12px; background: #6ef2d3; color: #14112b; font-size: 13px; padding: 1px 4px; box-shadow: 2px 2px 0 #0a0818; }
+  .beat { display: flex; align-items: flex-end; gap: 6px; font-size: 34px; line-height: 1; color: #9be15d; }
+  .beat .r { color: #8fd3ff; }
   .xylo { display: flex; align-items: center; gap: 4px; }
   .xylo span { width: 13px; height: var(--h); background: var(--b); color: #14112b; font-size: 10px; font-weight: 700;
     display: flex; align-items: flex-end; justify-content: center; padding-bottom: 3px; box-shadow: 2px 2px 0 #0a0818; }
@@ -410,6 +412,11 @@ const games = [
     tags: ["오늘의 가락", "고양이 모으기", "고수 모드"],
     url: "https://dobbi52.github.io/garak/", color: "#ffe156",
     thumb: `<div class="xylo"><span style="--h:46px;--b:#ff6c6c">솔</span><span style="--h:40px;--b:#ffb84a">미</span><span style="--h:40px;--b:#ffb84a">미</span><span style="--h:34px;--b:#6ef28a">파</span><span style="--h:28px;--b:#5ec8ff">레</span></div>` },
+  { name: "숲속 박자 음악회", grade: [4, 6], subjects: ["음악"], type: "리듬 따라 치기", added: "2026-10-14", login: "beat",
+    desc: "숲속 친구가 들려주는 음표·쉼표 리듬을 듣고 똑같이 따라 쳐요. 단계가 오를수록 빨라지고 마디도 길어져요. 모은 코인으로 동물 음악대 친구를 뽑아요!",
+    tags: ["9단계", "무한 음표", "동물 음악대"],
+    url: "https://dobbi52.github.io/beat-room/", color: "#9be15d",
+    thumb: `<div class="beat"><span>♩</span><span>♫</span><span class="r">𝄽</span><span>♩</span></div>` },
 ];
 
 // ▼ 탭 순서 (게임이 있는 교과만 화면에 나타나요)
