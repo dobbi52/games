@@ -240,8 +240,7 @@
   .m24 span { width: 30px; height: 30px; display: grid; place-items: center; font-size: 16px; font-weight: 700; color: #14112b; background: #ffd84a; box-shadow: 2px 2px 0 #b8901a; }
   .m24 span:nth-child(2), .m24 span:nth-child(3) { background: #ff7aa8; box-shadow: 2px 2px 0 #b8456c; }
   .m24 b { position: absolute; right: -14px; bottom: -12px; background: #6ef2d3; color: #14112b; font-size: 13px; padding: 1px 4px; box-shadow: 2px 2px 0 #0a0818; }
-  .beat { display: flex; align-items: flex-end; gap: 6px; font-size: 34px; line-height: 1; color: #9be15d; }
-  .beat .r { color: #8fd3ff; }
+  .beat { width: 72%; height: auto; display: block; }
   .xylo { display: flex; align-items: center; gap: 4px; }
   .xylo span { width: 13px; height: var(--h); background: var(--b); color: #14112b; font-size: 10px; font-weight: 700;
     display: flex; align-items: flex-end; justify-content: center; padding-bottom: 3px; box-shadow: 2px 2px 0 #0a0818; }
@@ -416,7 +415,7 @@ const games = [
     desc: "숲속 친구가 들려주는 음표·쉼표 리듬을 듣고 똑같이 따라 쳐요. 단계가 오를수록 빨라지고 마디도 길어져요. 모은 코인으로 동물 음악대 친구를 뽑아요!",
     tags: ["9단계", "무한 음표", "동물 음악대"],
     url: "https://dobbi52.github.io/beat-room/", color: "#9be15d",
-    thumb: `<div class="beat"><span>♩</span><span>♫</span><span class="r">𝄽</span><span>♩</span></div>` },
+    thumb: `<svg class="beat" viewBox="0 0 36 20" shape-rendering="crispEdges" aria-hidden="true"><g fill="#9be15d"><rect x="0" y="15" width="4" height="3"/><rect x="3" y="3" width="1" height="13"/><rect x="8" y="15" width="4" height="3"/><rect x="11" y="3" width="1" height="13"/><rect x="15" y="15" width="4" height="3"/><rect x="18" y="3" width="1" height="13"/><rect x="11" y="3" width="8" height="2"/><rect x="31" y="15" width="4" height="3"/><rect x="34" y="3" width="1" height="13"/></g><g fill="#8fd3ff"><rect x="24" y="4" width="2" height="2"/><rect x="25" y="6" width="2" height="2"/><rect x="26" y="8" width="2" height="2"/><rect x="25" y="10" width="2" height="1"/><rect x="24" y="11" width="2" height="2"/><rect x="25" y="13" width="2" height="2"/><rect x="26" y="15" width="2" height="1"/><rect x="25" y="16" width="2" height="1"/></g></svg>` },
 ];
 
 // ▼ 탭 순서 (게임이 있는 교과만 화면에 나타나요)
