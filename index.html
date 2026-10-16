@@ -391,7 +391,7 @@
 // ▼ 게임 추가는 여기에 한 덩어리씩 넣으면 됩니다.
 //   subjects: 교과(여러 개 가능) / type: 놀이 방식 / tags: 작은 표시 (카드에는 앞의 2개만, 안내 창에는 전부)
 //   grade: 알맞은 학년 [처음, 끝] — 예: [3, 6] → 3~6학년, [5, 6] → 5~6학년
-//   added: 허브에 넣은 날짜(예: "2026-10-12") — 넣으면 2주 동안 NEW 배지가 붙어요
+//   added: 허브에 넣은 날짜(예: "2026-10-12") — 넣으면 1주일 동안 NEW 배지가 붙어요
 //   login: 통합 계정이 필요한 게임의 짧은 이름(kordle·semdle·garak·queens) — 넣으면 게임 시작 전에 로그인을 받아요
 const games = [
   { name: "꼬들", grade: [3, 6], subjects: ["국어"], type: "낱말 추리", login: "kordle",
@@ -505,7 +505,7 @@ function badgesOf(g) {
   if ((badgeInfo.hot || []).includes(g.name)) out.push(["hot", "HOT", "HOT"]);
   if (g.added) {
     const days = (Date.parse(new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" })) - Date.parse(g.added)) / 864e5;
-    if (days >= 0 && days < 14) out.push(["new", "NEW", "NEW"]);
+    if (days >= 0 && days < 7) out.push(["new", "NEW", "NEW"]);
   }
   return out;
 }
