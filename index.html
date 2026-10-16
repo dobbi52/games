@@ -356,8 +356,8 @@
   <main class="list" id="list"></main>
   <footer>NEW GAME COMING SOON <b>_</b></footer>
   <div class="score" id="score" hidden>
-    <div><span>TODAY</span><b id="sToday">---</b></div>
-    <div><span>TOTAL</span><b id="sTotal">-----</b></div>
+    <div><span>TODAY</span><b id="sToday">----</b></div>
+    <div><span>TOTAL</span><b id="sTotal">------</b></div>
   </div>
 </div>
 <div id="flash"></div>
@@ -527,7 +527,7 @@ const $ = id => document.getElementById(id);
 // ▼ 방문 기록: Apps Script 웹 앱 주소를 따옴표 안에 붙여 넣으세요. 비워 두면 점수판이 숨겨져요.
 const STATS_URL = "https://script.google.com/macros/s/AKfycbx15D4z15tGhs9bwd_q1EVMZJI1dUk3DV0gqhj1NR81I4c682KZ3HjiLydNoCDAGBLg5A/exec";
 const kstDay = () => new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
-const pad = (n, w) => String(Math.min(n, 10 ** w - 1)).padStart(w, "0");
+const pad = (n, w) => String(n).padStart(w, "0");   // 자리를 넘으면 자릿수가 저절로 늘어나요
 // ▼ 점수판 숫자: 오락기 점수처럼 뚝뚝 끊기며 올라가기 (점수판이 화면에 보일 때 시작)
 function countUp(el, target, width) {
   const run = () => {
@@ -552,8 +552,8 @@ function countUp(el, target, width) {
 }
 function showStats(d) {
   if (!d || typeof d.today !== "number") return;
-  countUp($("sToday"), d.today, 3);
-  countUp($("sTotal"), d.total, 5);
+  countUp($("sToday"), d.today, 4);
+  countUp($("sTotal"), d.total, 6);
   badgeInfo = { todayBest: d.todayBest || null, hot: d.hot || [] };
   applyBadges();
 }
