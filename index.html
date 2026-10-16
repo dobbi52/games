@@ -394,7 +394,7 @@
 //   added: 허브에 넣은 날짜(예: "2026-10-12") — 넣으면 1주일 동안 NEW 배지가 붙어요
 //   login: 통합 계정이 필요한 게임의 짧은 이름(kordle·semdle·garak·queens) — 넣으면 게임 시작 전에 로그인을 받아요
 const games = [
-  { name: "꼬들", grade: [3, 6], subjects: ["국어"], type: "낱말 추리", login: "kordle",
+  { name: "꼬들", grade: [4, 6], subjects: ["국어"], type: "낱말 추리", login: "kordle",
     desc: "한글 자모 6칸으로 숨은 낱말을 맞혀요. 친구들과 순위 경쟁도!",
     tags: ["순위표", "챌린지"],
     url: "https://dobbi52.github.io/kordle-challenge/", color: "#6ef28a",
@@ -429,7 +429,7 @@ const games = [
     tags: ["9단계", "무한 음표", "동물 음악대"],
     url: "https://dobbi52.github.io/beat-room/", color: "#9be15d",
     thumb: `<svg class="beat" viewBox="0 0 36 20" shape-rendering="crispEdges" aria-hidden="true"><g fill="#9be15d"><rect x="0" y="15" width="4" height="3"/><rect x="3" y="3" width="1" height="13"/><rect x="8" y="15" width="4" height="3"/><rect x="11" y="3" width="1" height="13"/><rect x="15" y="15" width="4" height="3"/><rect x="18" y="3" width="1" height="13"/><rect x="11" y="3" width="8" height="2"/><rect x="31" y="15" width="4" height="3"/><rect x="34" y="3" width="1" height="13"/></g><g fill="#8fd3ff"><rect x="24" y="4" width="2" height="2"/><rect x="25" y="6" width="2" height="2"/><rect x="26" y="8" width="2" height="2"/><rect x="25" y="10" width="2" height="1"/><rect x="24" y="11" width="2" height="2"/><rect x="25" y="13" width="2" height="2"/><rect x="26" y="15" width="2" height="1"/><rect x="25" y="16" width="2" height="1"/></g></svg>` },
-  { name: "스카이스크래퍼", grade: [3, 6], subjects: ["생각 놀이"], type: "퍼즐", added: "2026-10-16", login: "sky",
+  { name: "스카이스크래퍼", grade: [5, 6], subjects: ["생각 놀이"], type: "퍼즐", added: "2026-10-16", login: "sky",
     desc: "1층부터 5층까지 건물을 세워요. 바깥 숫자는 그쪽에서 보이는 건물 수! 힌트가 푸는 방법을 알려 줘요. 퍼즐을 풀어 별과 벽돌을 모으면 나만의 픽셀 도시가 자라요.",
     tags: ["오늘의 퍼즐", "도시 키우기", "연습 모드"],
     url: "https://dobbi52.github.io/skyscraper/", color: "#ffd166",
@@ -607,7 +607,7 @@ $("gstart").addEventListener("click", e => {
       onPlay: () => { logStart(g.name); window.open(g.url, "_blank", "noopener"); } });
     return;
   }
-  logStart($("gname").textContent);
+  logStart(g ? g.name : $("gname").textContent);   // 번역된 화면 글자 대신 원래 이름으로 기록
   const f = $("flash"); f.style.setProperty("--c", $("panel").style.getPropertyValue("--c"));
   f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
   setTimeout(closeGame, 120);
