@@ -255,6 +255,11 @@
   .m24 b { position: absolute; right: -14px; bottom: -12px; background: #6ef2d3; color: #14112b; font-size: 13px; padding: 1px 4px; box-shadow: 2px 2px 0 #0a0818; }
   .beat { width: 72%; height: auto; display: block; }
   .xylo { display: flex; align-items: center; gap: 4px; }
+  .bldg { display: flex; align-items: flex-end; gap: 3px; }
+  .bldg img { width: 21px; height: auto; display: block; image-rendering: pixelated; }
+  .hg { display: flex; align-items: center; gap: 2px; }
+  .hg img { width: 44px; height: 44px; object-fit: contain; image-rendering: pixelated; }
+  .hg b { font-size: 11px; color: #ffd84a; }
   .xylo span { width: 13px; height: var(--h); background: var(--b); color: #14112b; font-size: 10px; font-weight: 700;
     display: flex; align-items: flex-end; justify-content: center; padding-bottom: 3px; box-shadow: 2px 2px 0 #0a0818; }
   .pair { display: grid; grid-template-columns: repeat(3, 24px); gap: 4px; }
@@ -433,7 +438,12 @@ const games = [
     desc: "1층부터 5층까지 건물을 세워요. 바깥 숫자는 그쪽에서 보이는 건물 수! 힌트가 푸는 방법을 알려 줘요. 퍼즐을 풀어 별과 벽돌을 모으면 나만의 픽셀 도시가 자라요.",
     tags: ["오늘의 퍼즐", "도시 키우기", "연습 모드"],
     url: "https://dobbi52.github.io/skyscraper/", color: "#ffd166",
-    thumb: `<div class="xylo"><span style="--h:26px;--b:#7ee08a">2</span><span style="--h:16px;--b:#ffd166">1</span><span style="--h:44px;--b:#b493ff">4</span><span style="--h:36px;--b:#5fd3f3">3</span><span style="--h:52px;--b:#ff6b9a">5</span></div>` },
+    thumb: `<div class="bldg">${[2, 4, 3, 5].map(n => `<img src="https://dobbi52.github.io/skyscraper/images/p${n}.png" alt="">`).join("")}</div>` },
+  { name: "호박 고누", grade: [3, 6], subjects: ["생각 놀이"], type: "1:1 대전", added: "2026-10-17", login: "hobak",
+    desc: "우리 전통 놀이 고누로 접속한 친구와 1:1 대결! 상대 말을 꼼짝 못 하게 가두면 이겨요. 친구가 없으면 도깨비와 연습하고, 많이 할수록 등급이 오르고 꾸미기를 얻어요.",
+    tags: ["실시간 대전", "오늘의 순위", "컴퓨터 연습"],
+    url: "https://dobbi52.github.io/hobak-gonu/", color: "#ff9a2e",
+    thumb: `<div class="hg"><img src="https://dobbi52.github.io/hobak-gonu/img/pumpkin_idle.png" alt=""><b>VS</b><img src="https://dobbi52.github.io/hobak-gonu/img/wisp_idle.png" alt=""></div>` },
 ];
 
 // ▼ 탭 순서 (게임이 있는 교과만 화면에 나타나요)
