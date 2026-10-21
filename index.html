@@ -260,6 +260,7 @@
   .hg { display: flex; align-items: center; justify-content: center; gap: 1px; max-width: 92px; }
   .hg img { width: 38px; height: 38px; object-fit: contain; image-rendering: pixelated; flex: none; }
   .hg b { font-size: 10px; color: #ffd84a; flex: none; }
+  .bg-fish img { width: 76px; height: auto; display: block; image-rendering: pixelated; }
   .xylo span { width: 13px; height: var(--h); background: var(--b); color: #14112b; font-size: 10px; font-weight: 700;
     display: flex; align-items: flex-end; justify-content: center; padding-bottom: 3px; box-shadow: 2px 2px 0 #0a0818; }
   .pair { display: grid; grid-template-columns: repeat(3, 24px); gap: 4px; }
@@ -454,6 +455,11 @@ const games = [
     tags: ["실시간 대전", "오늘의 순위", "컴퓨터 연습"],
     url: "https://dobbi52.github.io/hobak-gonu/", color: "#ff9a2e",
     thumb: `<div class="hg"><img src="https://dobbi52.github.io/hobak-gonu/img/pumpkin_idle.png" alt=""><b>VS</b><img src="https://dobbi52.github.io/hobak-gonu/img/wisp_idle.png" alt=""></div>` },
+  { name: "맞춤법 붕어빵 가게", grade: [1, 6], subjects: ["국어"], type: "타이쿤", added: "2026-10-21",
+    desc: "손님이 말한 문장에 맞는 낱말이 적힌 붕어빵을 구워 팔아요. 오래 두면 타니 조심! 하트 3개를 다 잃을 때까지 손님이 계속 오고, 갈수록 빨라져요. 저학년·고학년 단계가 있고 로그인하면 순위표에 기록이 올라가요.",
+    tags: ["맞춤법", "순위표", "저학년·고학년"],
+    url: "https://dobbi52.github.io/bungeo/", color: "#f6b93b",
+    thumb: `<div class="bg-fish"><img src="https://dobbi52.github.io/bungeo/img/fish.png" alt=""></div>` },
 ];
 
 // ▼ 탭 순서 (게임이 있는 교과만 화면에 나타나요)
