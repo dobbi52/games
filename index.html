@@ -366,6 +366,36 @@
   #flash { position: fixed; inset: 0; z-index: 20; pointer-events: none; background: #fff; opacity: 0; }
   #flash.go { animation: flash .45s steps(4); }
   @keyframes flash { 0% { opacity: .9; } 50% { opacity: .35; background: var(--c, #fff); } 100% { opacity: 0; } }
+
+  /* ===== 카드 크기: 컴퓨터 한 줄 4개 / 휴대폰·태블릿 한 줄 3개 ===== */
+  .name .short { display: none; }
+  @media (min-width: 900px) {
+    .wrap { max-width: 1080px; }
+    .list { grid-template-columns: repeat(4, 1fr) !important; gap: 28px 18px; }
+    .cab { padding: 26px 10px 16px; }
+    .cab .thumb { width: 88px; height: 88px; }
+    .cab .thumb > * { transform: none; zoom: .85; }
+    .cab .name { font-size: 20px; margin-top: 12px; }
+    .cab .grade { font-size: 12px; margin-top: 8px; padding: 2px 8px; }
+    .cab .grade + .chips { margin-top: 8px; }
+    .no { font-size: 12px; padding: 2px 8px; }
+  }
+  @media (max-width: 899px) {
+    .list { grid-template-columns: repeat(3, 1fr) !important; gap: 20px 8px; }
+    .cab { padding: 18px 4px 12px; }
+    .cab .thumb { width: 56px; height: 56px; border-width: 2px; }
+    .cab .thumb > * { transform: none; zoom: .6; }
+    .cab .name { font-size: 13px; margin-top: 7px; line-height: 1.25; }
+    .cab .name .full { display: none; }
+    .cab .name .short { display: inline; }
+    .cab .grade, .cab .chips { display: none; }      /* 휴대폰 카드에는 학년·태그 없이 (안내 창에는 그대로) */
+    .cab .no { font-size: 10px; left: 4px; padding: 2px 4px; top: -11px; }
+    .badges { right: 3px; gap: 2px; top: -11px; }
+    .badge { font-size: 9px; padding: 2px 3px; }
+    .cab .need { font-size: 9px; }
+    .soon .q { font-size: 34px; }
+    .soon .wait, .soon .hint { font-size: 9px; }
+  }
 </style>
 </head>
 <body>
@@ -415,6 +445,7 @@
 <script>
 // ▼ 게임 추가는 여기에 한 덩어리씩 넣으면 됩니다.
 //   subjects: 교과(여러 개 가능) / type: 놀이 방식 / tags: 작은 표시 (카드에는 앞의 2개만, 안내 창에는 전부)
+//   short: 휴대폰 카드에 쓸 짧은 이름 (이름이 길 때만, 예: "박자 음악회")
 //   grade: 알맞은 학년 [처음, 끝] — 예: [3, 6] → 3~6학년, [5, 6] → 5~6학년
 //   added: 허브에 넣은 날짜(예: "2026-10-12") — 넣으면 1주일 동안 NEW 배지가 붙어요
 //   login: 통합 계정이 필요한 게임의 짧은 이름(kordle·semdle·garak·queens) — 넣으면 게임 시작 전에 로그인을 받아요
@@ -449,7 +480,7 @@ const games = [
     tags: ["오늘의 가락", "고양이 모으기", "고수 모드"],
     url: "https://dobbi52.github.io/garak/", color: "#ffe156",
     thumb: `<div class="xylo"><span style="--h:46px;--b:#ff6c6c">솔</span><span style="--h:40px;--b:#ffb84a">미</span><span style="--h:40px;--b:#ffb84a">미</span><span style="--h:34px;--b:#6ef28a">파</span><span style="--h:28px;--b:#5ec8ff">레</span></div>` },
-  { name: "숲속 박자 음악회", grade: [4, 6], subjects: ["음악"], type: "리듬 따라 치기", added: "2026-10-14", login: "beat",
+  { name: "숲속 박자 음악회", short: "박자 음악회", grade: [4, 6], subjects: ["음악"], type: "리듬 따라 치기", added: "2026-10-14", login: "beat",
     desc: "숲속 친구가 들려주는 음표·쉼표 리듬을 듣고 똑같이 따라 쳐요. 단계가 오를수록 빨라지고 마디도 길어져요. 모은 코인으로 동물 음악대 친구를 뽑아요!",
     tags: ["9단계", "무한 음표", "동물 음악대"],
     url: "https://dobbi52.github.io/beat-room/", color: "#9be15d",
@@ -464,7 +495,7 @@ const games = [
     tags: ["실시간 대전", "오늘의 순위", "컴퓨터 연습"],
     url: "https://dobbi52.github.io/hobak-gonu/", color: "#ff9a2e",
     thumb: `<div class="hg"><img src="https://dobbi52.github.io/hobak-gonu/img/pumpkin_idle.png" alt=""><b>VS</b><img src="https://dobbi52.github.io/hobak-gonu/img/wisp_idle.png" alt=""></div>` },
-  { name: "맞춤법 붕어빵 가게", grade: [1, 6], subjects: ["국어"], type: "타이쿤", added: "2026-10-21",
+  { name: "맞춤법 붕어빵 가게", short: "붕어빵 가게", grade: [1, 6], subjects: ["국어"], type: "타이쿤", added: "2026-10-21",
     desc: "손님이 말한 문장에 맞는 낱말이 적힌 붕어빵을 구워 팔아요. 오래 두면 타니 조심! 하트 3개를 다 잃을 때까지 손님이 계속 오고, 갈수록 빨라져요. 저학년·고학년 단계가 있고 로그인하면 순위표에 기록이 올라가요.",
     tags: ["맞춤법", "순위표", "저학년·고학년"],
     url: "https://dobbi52.github.io/bungeo/", color: "#f6b93b",
@@ -499,13 +530,13 @@ function render() {
   <button class="cab" data-i="${i}" style="--c:${g.color};--n:${k}">
     <span class="no"><i>GAME </i>${String(i + 1).padStart(2, "0")}</span>
     <div class="thumb">${g.thumb || "🎮"}</div>
-    <div class="name">${g.name}</div>
+    <div class="name">${g.short ? `<span class="full">${g.name}</span><span class="short">${g.short}</span>` : g.name}</div>
     ${gradeHTML(g)}
     ${g.tags && g.tags.length ? `<div class="chips one">${g.tags.slice(0, 2).map(t => `<span>${t}</span>`).join("")}</div>` : ""}
     ${g.login && AA ? `<span class="need">1P LOGIN</span>` : ""}
   </button>`).join("") : `<p class="empty">아직 게임이 없어요</p>`;
   // ▼ '전체' 탭에서 마지막 줄의 빈칸을 COMING SOON 카드로 채우기 (한 줄 칸 수: 큰 화면 3 / 작은 화면 2)
-  const cols = matchMedia("(min-width: 900px)").matches ? 3 : 2;
+  const cols = matchMedia("(min-width: 900px)").matches ? 4 : 3;
   const gap = current === "전체" ? (cols - games.length % cols) % cols : 0;
   const SOON_COLORS = ["#8f88c9", "#6f9fd8"];
   if (gap) document.getElementById("list").insertAdjacentHTML("beforeend", Array.from({ length: gap }, (_, j) => `
@@ -696,7 +727,9 @@ function showAccount(a) {
   b.classList.toggle("in", !!a);
   b.textContent = a ? "1P " + a.nick : "1P LOGIN";
   const n = $("notice");
-  n.hidden = false;
+  const NOTICE_END = "2026-10-31";     // 이날이 지나면 안내 상자가 저절로 사라져요
+  n.hidden = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" }) > NOTICE_END;
+  if (n.hidden) { if (curGame) needNote(curGame); return; }
   const c = t => `<span class="ch">${t}</span>`;   // 덩어리 단위로만 줄이 바뀌게
   n.innerHTML = a
     ? `${c("<b>통합 계정</b>으로")} ${c("꼬들·셈들·가락 꼬들·퀸즈를")} ${c("모두 이어서 해요.")}<br>${c("게임마다 하던 예전 로그인은")} ${c(`<b>${AA.OLD_END}</b>까지만 돼요.`)} <button type="button" data-acc>내 계정</button>`
