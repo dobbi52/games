@@ -396,6 +396,60 @@
     .soon .q { font-size: 34px; }
     .soon .wait, .soon .hint { display: none; }   /* 휴대폰: 준비 중 카드도 다른 카드와 같은 높이로 */
   }
+
+  /* ===== 이벤트 배경 (기간에만 자동으로 켜짐) ===== */
+  .ev-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  body.ev-on .wrap { position: relative; z-index: 1; }
+  .ev-msg { display: none; }
+  .px { display: block; image-rendering: pixelated; shape-rendering: crispEdges; }
+
+  /* 핼러윈 */
+  body.ev-halloween {
+    background:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 24px 24px,
+      radial-gradient(ellipse 90% 45% at 50% 105%, rgba(255, 122, 26, .28), transparent 70%) fixed,
+      linear-gradient(#150a24, #241238 55%, #3a1636) fixed;
+  }
+  .ev-halloween h1 { color: #ffb23f; text-shadow: 4px 4px 0 #7b2cbf, 8px 8px 0 #2a0f45; }
+  .ev-halloween .ev-msg {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-top: 10px; font-size: 15px; font-weight: 700; letter-spacing: .12em; color: #ff8a1f;
+    text-shadow: 0 0 8px rgba(255, 138, 31, .7);
+  }
+  .ev-msg .px { width: 22px; height: 18px; animation: lantern 1.6s steps(2) infinite; }
+  @keyframes lantern { 50% { filter: brightness(1.35) drop-shadow(0 0 6px #ffb23f); } }
+  .moon {
+    position: absolute; top: 70px; right: 5%; width: 72px; height: 72px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 38%, #fff7d6, #ffe08a 60%, #e8b84a);
+    box-shadow: 0 0 40px 10px rgba(255, 224, 138, .35);
+  }
+  .moon::after { content: ''; position: absolute; width: 14px; height: 14px; left: 40px; top: 16px; border-radius: 50%; background: rgba(200, 150, 60, .35); box-shadow: -18px 22px 0 -3px rgba(200, 150, 60, .3); }
+  .bat { position: absolute; width: 64px; height: 34px; filter: drop-shadow(0 0 5px rgba(255, 150, 60, .55)); animation: fly var(--d) linear infinite; animation-delay: var(--delay); opacity: .9; }
+  .bat .px { width: 100%; height: 100%; animation: flap .35s steps(1) infinite; }
+  @keyframes flap { 50% { transform: scaleY(.55); } }
+  @keyframes fly {
+    0% { transform: translate(-80px, 0); }
+    25% { transform: translate(25vw, -24px); }
+    50% { transform: translate(50vw, 10px); }
+    75% { transform: translate(75vw, -18px); }
+    100% { transform: translate(calc(100vw + 80px), 0); }
+  }
+  .ghost { position: absolute; width: 36px; height: 40px; opacity: .55; animation: boo 5s ease-in-out infinite; animation-delay: var(--delay); }
+  .ghost .px { width: 100%; height: 100%; }
+  @keyframes boo { 50% { transform: translateY(-16px); opacity: .85; } }
+  .pumpkins { display: none; }
+  .ev-halloween .pumpkins { display: flex; justify-content: center; gap: 18px; margin: 36px 0 -10px; }
+  .pumpkins .px { width: 33px; height: 27px; animation: lantern 1.6s steps(2) infinite; }
+  .pumpkins .px:nth-child(2n) { animation-delay: .8s; }
+  @media (max-width: 899px) {
+    .moon { width: 40px; height: 40px; top: 96px; left: 4%; right: auto; }
+    .moon::after { width: 7px; height: 7px; left: 22px; top: 9px; box-shadow: -9px 12px 0 -2px rgba(200, 150, 60, .3); }
+    .bat { width: 40px; height: 21px; }
+    .ghost { display: none; }
+    .ev-halloween .ev-msg { font-size: 12px; }
+    .pumpkins .px:nth-child(n+6) { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -404,12 +458,14 @@
     <button class="qr-btn" id="qrBtn" type="button" aria-label="휴대폰으로 열기 (QR 코드)" title="휴대폰으로 열기"><canvas id="qrMini"></canvas><i>QR</i></button></span></div>
   <header>
     <h1>생각 오락실</h1>
+    <p class="ev-msg" id="evMsg"></p>
     <p class="press">PRESS START<span class="press-more"> · 궁금한 게임을 눌러 보세요</span></p>
   </header>
   <p class="notice" id="notice" hidden></p>
   <nav class="tabs" id="tabs"></nav>
   <main class="list" id="list"></main>
   <footer>NEW GAME COMING SOON <b>_</b></footer>
+  <div class="pumpkins" id="evRow"></div>
   <div class="score" id="score" hidden>
     <div><span>TODAY</span><b id="sToday">----</b></div>
     <div><span>TOTAL</span><b id="sTotal">------</b></div>
@@ -743,6 +799,68 @@ if (AA) {
   showAccount(AA.get());
   if (AA.get()) AA.refresh();     // 연결 상태를 조용히 다시 받아 둠
 }
+
+
+// ▼ 이벤트 배경: 기간 안에만 저절로 켜져요. (미리 보기: 주소 끝에 ?event=halloween)
+const EVENTS = [
+  { id: "halloween", from: "2026-10-26", to: "2026-10-31" },
+];
+function pixelSVG(map, colors) {
+  const h = map.length, w = map[0].length;
+  let r = "";
+  map.forEach((row, y) => [...row].forEach((ch, x) => { if (colors[ch]) r += `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${colors[ch]}"/>`; }));
+  return `<svg class="px" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">${r}</svg>`;
+}
+const SPRITE = {
+  pumpkin: pixelSVG([
+    ".....GG....",
+    "....GG.....",
+    "..OOOOOOO..",
+    ".OOoOOOoOO.",
+    "OOYYOOOYYOO",
+    "OOOOOYOOOOO",
+    "OOYoYYYoYOO",
+    ".OOYOYOYOO.",
+    "..OOOOOOO.."], { O: "#ff8a1f", o: "#d9620b", Y: "#ffe14a", G: "#3fa34d" }),
+  bat: pixelSVG([
+    "X....X.X....X",
+    "XX...XXX...XX",
+    "XXX.XEXEX.XXX",
+    "XXXXXXXXXXXXX",
+    ".XXXXXXXXXXX.",
+    "..X..XXX..X..",
+    "......X......"], { X: "#2a1640", E: "#ffb23f" }),
+  ghost: pixelSVG([
+    "..XXXXX..",
+    ".XXXXXXX.",
+    "XXXXXXXXX",
+    "XXEXXXEXX",
+    "XXEXXXEXX",
+    "XXXXXXXXX",
+    "XXXXMXXXX",
+    "XXXXXXXXX",
+    "XXXXXXXXX",
+    "X.XX.XX.X"], { X: "#ece9ff", E: "#1a0f2e", M: "#ff8ab0" }),
+};
+(function startEvent() {
+  const q = new URLSearchParams(location.search).get("event");
+  const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
+  const ev = q ? EVENTS.find(e => e.id === q) : EVENTS.find(e => today >= e.from && today <= e.to);
+  if (!ev) return;
+  document.body.classList.add("ev-on", "ev-" + ev.id);
+  if (ev.id === "halloween") {
+    const layer = document.createElement("div");
+    layer.className = "ev-layer"; layer.setAttribute("aria-hidden", "true");
+    const bats = [[11, 22, 0], [26, 30, -9], [40, 26, -17], [60, 34, -4]]
+      .map(([top, d, delay]) => `<div class="bat" style="top:${top}%;--d:${d}s;--delay:${delay}s">${SPRITE.bat}</div>`).join("");
+    const ghosts = [[3, 30, 0], [92, 58, -2.5], [4, 74, -1.2]]
+      .map(([left, top, delay]) => `<div class="ghost" style="left:${left}%;top:${top}%;--delay:${delay}s">${SPRITE.ghost}</div>`).join("");
+    layer.innerHTML = `<div class="moon"></div>${bats}${ghosts}`;
+    document.body.prepend(layer);
+    $("evMsg").innerHTML = `${SPRITE.pumpkin}HAPPY HALLOWEEN${SPRITE.pumpkin}`;
+    $("evRow").innerHTML = SPRITE.pumpkin.repeat(9);
+  }
+})();
 
 render();
 </script>
