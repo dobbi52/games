@@ -650,12 +650,18 @@ function applyBadges() {
     if (!list.length) return;
     c.insertAdjacentHTML("beforeend", `<span class="badges">${list.map(b =>
       `<span class="badge b-${b[0]}" data-short="${b[2]}">${b[1]}</span>`).join("")}</span>`);
-    // 카드가 좁아 GAME 번호와 겹치면 TODAY'S BEST → BEST 로 줄이기
-    const box = c.querySelector(".badges"), no = c.querySelector(".no");
-    if (box.offsetLeft < no.offsetLeft + no.offsetWidth + 4)       // 애니메이션 중에도 정확하도록 offset 사용
-      box.querySelectorAll(".badge").forEach(b => b.textContent = b.dataset.short);
+    // 카드가 좁아 GAME 번호와 겹치면 차례로 줄이기: ① TODAY'S BEST → BEST ② GAME 12 → 12 ③ HOT ④ NEW
+    const box = c.querySelector(".badges"), no = c.querySelector(".no"), word = no.querySelector("i");
+    if (word) word.style.display = "";
+    const clash = () => box.offsetLeft < no.offsetLeft + no.offsetWidth + 4;   // 애니메이션 중에도 정확하도록 offset 사용
+    if (clash()) box.querySelectorAll(".badge").forEach(b => b.textContent = b.dataset.short);
+    if (clash() && word) word.style.display = "none";
+    if (clash() && box.querySelector(".b-today")) { const h = box.querySelector(".b-hot"); if (h) h.remove(); }   // ③ 오늘 1위면 HOT은 빼도 됨
+    if (clash()) { const n = box.querySelector(".b-new"); if (n) n.remove(); }                              // ④ 그래도 겹치면 NEW 빼기
   });
 }
+addEventListener("resize", () => { clearTimeout(applyBadges.t); applyBadges.t = setTimeout(applyBadges, 150); });
+if (document.fonts) document.fonts.ready.then(() => applyBadges());   // 글꼴이 늦게 들어와 글자 폭이 바뀌면 다시 맞추기
 const $ = id => document.getElementById(id);
 
 // ▼ 방문 기록: Apps Script 웹 앱 주소를 따옴표 안에 붙여 넣으세요. 비워 두면 점수판이 숨겨져요.
