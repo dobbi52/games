@@ -110,6 +110,11 @@
   }
   .press { margin-top: 18px; font-size: 18px; color: #6ef2d3; animation: blink 1.1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
+  .live-n { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; font-size: 12px; color: #8f88c9; }
+  .live-n i { display: inline-block; width: 7px; height: 7px; background: #5c5890; }
+  .live-n.on { color: #6ef28a; }
+  .live-n.on i { background: #6ef28a; box-shadow: 0 0 6px #6ef28a; animation: blink 1.2s steps(1) infinite; }
+  @media (max-width: 560px) { .live-n { font-size: 10px; margin-top: 5px; gap: 4px; } .live-n i { width: 5px; height: 5px; } }
 
   .tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 34px; }
   .tab {
@@ -507,6 +512,7 @@
 //   short: 휴대폰 카드에 쓸 짧은 이름 (이름이 길 때만, 예: "박자 음악회")
 //   grade: 알맞은 학년 [처음, 끝] — 예: [3, 6] → 3~6학년, [5, 6] → 5~6학년
 //   added: 허브에 넣은 날짜(예: "2026-10-12") — 넣으면 1주일 동안 NEW 배지가 붙어요
+//   live: 접속자 수를 보여줄 게임의 Firebase presence 주소 (…/presence.json) — 넣으면 카드에 "● 12명 접속 중"이 떠요
 //   login: 통합 계정이 필요한 게임의 짧은 이름(kordle·semdle·garak·queens) — 넣으면 게임 시작 전에 로그인을 받아요
 const games = [
   { name: "꼬들", grade: [4, 6], subjects: ["국어"], type: "낱말 추리", login: "kordle",
@@ -553,6 +559,7 @@ const games = [
     desc: "우리 전통 놀이 고누로 접속한 친구와 1:1 대결! 상대 말을 꼼짝 못 하게 가두면 이겨요. 친구가 없으면 도깨비와 연습하고, 많이 할수록 등급이 오르고 꾸미기를 얻어요.",
     tags: ["실시간 대전", "오늘의 순위", "컴퓨터 연습"],
     url: "https://dobbi52.github.io/hobak-gonu/", color: "#ff9a2e",
+    live: "https://hobak-gonu-default-rtdb.asia-southeast1.firebasedatabase.app/presence.json",
     thumb: `<div class="hg"><img src="https://dobbi52.github.io/hobak-gonu/img/pumpkin_idle.png" alt=""><b>VS</b><img src="https://dobbi52.github.io/hobak-gonu/img/wisp_idle.png" alt=""></div>` },
   { name: "맞춤법 붕어빵 가게", short: "붕어빵 가게", grade: [1, 6], subjects: ["국어"], type: "타이쿤", added: "2026-10-21",
     desc: "손님이 말한 문장에 맞는 낱말이 적힌 붕어빵을 구워 팔아요. 오래 두면 타니 조심! 하트 3개를 다 잃을 때까지 손님이 계속 오고, 갈수록 빨라져요. 저학년·고학년 단계가 있고 로그인하면 순위표에 기록이 올라가요.",
@@ -563,10 +570,12 @@ const games = [
     desc: "접속한 친구와 1:1 틱택토! 말은 3개까지만 놓을 수 있고, 4번째를 놓으면 가장 오래된 말이 사라져요. 친구가 없으면 컴퓨터와 연습하고, 이길수록 내 말이 예뻐져요. 오늘의 1등은 왕관을 써요.",
     tags: ["실시간 대전", "오늘의 순위", "컴퓨터 연습"],
     url: "https://dobbi52.github.io/tictactoe/", color: "#f0652f",
+    live: "https://tictactoe-7c486-default-rtdb.asia-southeast1.firebasedatabase.app/presence.json",
     thumb: `<div class="hg"><img src="https://dobbi52.github.io/tictactoe/img/x.svg" alt=""><b>VS</b><img src="https://dobbi52.github.io/tictactoe/img/o.svg" alt=""></div>` },  { name: "픽셀 캐치마인드", short: "캐치마인드", grade: [4, 6], subjects: ["미술", "생각 놀이"], type: "그림 퀴즈", added: "2026-10-25",
     desc: "선생님이 방을 열면 반 친구들이 휴대폰·노트북으로 들어와요. 뽑힌 친구 1~3명이 픽셀 칸을 칠해 이어 그리고, 나머지는 그림을 보고 정답을 맞혀요. 맞히면 그린 팀도 같은 점수! 컴퓨터 친구와 혼자 연습할 수도 있어요.",
     tags: ["수업용 실시간", "이어 그리기", "혼자 연습"],
     url: "https://dobbi52.github.io/catchmind/", color: "#39ff88",
+    live: "https://pixel-catchmind-default-rtdb.asia-southeast1.firebasedatabase.app/presence.json",
     thumb: `<svg class="beat" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true"><rect x="5" y="0" width="1" height="1" fill="#B07A44"/><rect x="6" y="0" width="1" height="1" fill="#B07A44"/><rect x="4" y="1" width="1" height="1" fill="#B07A44"/><rect x="5" y="1" width="1" height="1" fill="#B07A44"/><rect x="6" y="1" width="1" height="1" fill="#B07A44"/><rect x="7" y="1" width="1" height="1" fill="#B07A44"/><rect x="4" y="2" width="1" height="1" fill="#F4F5FF"/><rect x="5" y="2" width="1" height="1" fill="#F4F5FF"/><rect x="6" y="2" width="1" height="1" fill="#F4F5FF"/><rect x="7" y="2" width="1" height="1" fill="#F4F5FF"/><rect x="3" y="3" width="1" height="1" fill="#F4F5FF"/><rect x="4" y="3" width="1" height="1" fill="#F4F5FF"/><rect x="5" y="3" width="1" height="1" fill="#F4F5FF"/><rect x="6" y="3" width="1" height="1" fill="#F4F5FF"/><rect x="7" y="3" width="1" height="1" fill="#F4F5FF"/><rect x="8" y="3" width="1" height="1" fill="#F4F5FF"/><rect x="3" y="4" width="1" height="1" fill="#F4F5FF"/><rect x="4" y="4" width="1" height="1" fill="#4FC3FF"/><rect x="5" y="4" width="1" height="1" fill="#F4F5FF"/><rect x="6" y="4" width="1" height="1" fill="#F4F5FF"/><rect x="7" y="4" width="1" height="1" fill="#4FC3FF"/><rect x="8" y="4" width="1" height="1" fill="#F4F5FF"/><rect x="3" y="5" width="1" height="1" fill="#F4F5FF"/><rect x="4" y="5" width="1" height="1" fill="#F4F5FF"/><rect x="5" y="5" width="1" height="1" fill="#FF9F43"/><rect x="6" y="5" width="1" height="1" fill="#FF9F43"/><rect x="7" y="5" width="1" height="1" fill="#F4F5FF"/><rect x="8" y="5" width="1" height="1" fill="#F4F5FF"/><rect x="4" y="6" width="1" height="1" fill="#F4F5FF"/><rect x="5" y="6" width="1" height="1" fill="#F4F5FF"/><rect x="6" y="6" width="1" height="1" fill="#F4F5FF"/><rect x="7" y="6" width="1" height="1" fill="#F4F5FF"/><rect x="3" y="7" width="1" height="1" fill="#F4F5FF"/><rect x="4" y="7" width="1" height="1" fill="#F4F5FF"/><rect x="5" y="7" width="1" height="1" fill="#F4F5FF"/><rect x="6" y="7" width="1" height="1" fill="#F4F5FF"/><rect x="7" y="7" width="1" height="1" fill="#F4F5FF"/><rect x="8" y="7" width="1" height="1" fill="#F4F5FF"/><rect x="2" y="8" width="1" height="1" fill="#F4F5FF"/><rect x="3" y="8" width="1" height="1" fill="#F4F5FF"/><rect x="4" y="8" width="1" height="1" fill="#F4F5FF"/><rect x="5" y="8" width="1" height="1" fill="#F4F5FF"/><rect x="6" y="8" width="1" height="1" fill="#F4F5FF"/><rect x="7" y="8" width="1" height="1" fill="#F4F5FF"/><rect x="8" y="8" width="1" height="1" fill="#F4F5FF"/><rect x="9" y="8" width="1" height="1" fill="#F4F5FF"/><rect x="2" y="9" width="1" height="1" fill="#F4F5FF"/><rect x="3" y="9" width="1" height="1" fill="#F4F5FF"/><rect x="4" y="9" width="1" height="1" fill="#F4F5FF"/><rect x="5" y="9" width="1" height="1" fill="#F4F5FF"/><rect x="6" y="9" width="1" height="1" fill="#F4F5FF"/><rect x="7" y="9" width="1" height="1" fill="#F4F5FF"/><rect x="8" y="9" width="1" height="1" fill="#F4F5FF"/><rect x="9" y="9" width="1" height="1" fill="#F4F5FF"/><rect x="3" y="10" width="1" height="1" fill="#F4F5FF"/><rect x="4" y="10" width="1" height="1" fill="#F4F5FF"/><rect x="5" y="10" width="1" height="1" fill="#F4F5FF"/><rect x="6" y="10" width="1" height="1" fill="#F4F5FF"/><rect x="7" y="10" width="1" height="1" fill="#F4F5FF"/><rect x="8" y="10" width="1" height="1" fill="#F4F5FF"/></svg>` },
 ];
 
@@ -594,6 +603,7 @@ function render() {
     <span class="no"><i>GAME </i>${String(i + 1).padStart(2, "0")}</span>
     <div class="thumb">${g.thumb || "🎮"}</div>
     <div class="name">${g.short ? `<span class="full">${g.name}</span><span class="short">${g.short}</span>` : g.name}</div>
+    ${g.live ? `<div class="live-n" data-live="${i}"></div>` : ""}
     ${gradeHTML(g)}
     ${g.tags && g.tags.length ? `<div class="chips one">${g.tags.slice(0, 2).map(t => `<span>${t}</span>`).join("")}</div>` : ""}
     ${g.login && AA ? `<span class="need">1P LOGIN</span>` : ""}
@@ -613,7 +623,36 @@ function render() {
   document.querySelector("footer").hidden = gap > 0;   // 카드에 안내가 있으니 아래 문구는 숨김
   applyBadges();
   fitTags();
+  paintLive();
 }
+
+// ▼ 실시간 접속자 수: 게임의 presence 목록을 REST로 한 번씩 읽어서 세요 (연결을 붙잡지 않아 게임 쪽 접속 수를 차지하지 않음)
+const liveCounts = {};
+function paintLive() {
+  document.querySelectorAll("[data-live]").forEach(el => {
+    const n = liveCounts[el.dataset.live];
+    if (n == null) { el.hidden = true; return; }
+    el.hidden = false;
+    el.classList.toggle("on", n > 0);
+    el.innerHTML = n > 0 ? `<i></i>${n}명 접속 중` : `<i></i>지금은 조용해요`;
+  });
+}
+async function pollLive() {
+  if (document.hidden) return;
+  await Promise.all(games.map(async (g, i) => {
+    if (!g.live) return;
+    try {
+      const r = await fetch(g.live + "?shallow=true", { cache: "no-store" });
+      if (!r.ok) throw 0;
+      const v = await r.json();
+      liveCounts[i] = v ? Object.keys(v).length : 0;
+    } catch (e) { delete liveCounts[i]; }
+  }));
+  paintLive();
+}
+pollLive();
+setInterval(pollLive, 30000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) pollLive(); });
 
 // ▼ 카드 태그는 한 줄에 2개: 넘치면 글자를 조금씩 줄여서 맞추기
 function fitTags() {
@@ -726,7 +765,8 @@ function openGame(i, from) {
   $("gname").textContent = g.name;
   $("gkind").textContent = g.subjects.join(" · ") + " · " + g.type;
   $("gdesc").textContent = g.desc;
-  $("ggrade").innerHTML = gradeHTML(g);
+  $("ggrade").innerHTML = gradeHTML(g) + (g.live ? `<div class="live-n" data-live="${i}"></div>` : "");
+  paintLive();
   $("gtags").innerHTML = (g.tags || []).map(t => `<span>${t}</span>`).join("");
   $("gstart").href = g.url;
   $("dim").classList.add("open");
