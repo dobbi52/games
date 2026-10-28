@@ -99,7 +99,7 @@
   .qr-frame::after { bottom: -12px; right: -12px; border-left: 0; border-top: 0; }
   .qr-url { margin-top: 18px; font-size: 12px; color: #8f88c9; word-break: break-all; }
   .qr-insert { margin-top: 10px; font-size: 15px; color: #6ef2d3; animation: blink 1.1s steps(1) infinite; }
-  header { text-align: center; margin-bottom: 40px; }
+  header { text-align: center; margin-bottom: 40px; position: relative; }
   h1 {
     font-weight: 700;
     font-size: clamp(36px, 8.5vw, 56px);
@@ -459,6 +459,23 @@
     .ev-halloween .ev-msg { font-size: 12px; }
     .pumpkins .px:nth-child(n+6) { display: none; }
   }
+  /* 오리 교실 스티커 */
+  .duck-stk { position: absolute; left: 0; top: -18px; width: 118px; transform: rotate(-8deg); transition: transform .2s; text-decoration: none; z-index: 3; }
+  .duck-stk:hover, .duck-stk:focus-visible { transform: rotate(-2deg) scale(1.06); }
+  .duck-stk:hover canvas { animation: duckWig .35s ease-in-out 2; }
+  @keyframes duckWig { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-7deg); } 75% { transform: rotate(7deg); } }
+  .duck-stk canvas { display: block; width: 100%; image-rendering: pixelated; filter: drop-shadow(3px 4px 0 rgba(0,0,0,.45)); }
+  .duck-stk .tag { position: relative; margin: -6px auto 0; width: max-content; background: #fff; border: 2px solid #3b2412; color: #3b2412; font-size: 13px; padding: 3px 10px 4px; text-align: center; line-height: 1.15; box-shadow: 3px 3px 0 rgba(0,0,0,.4); }
+  .duck-stk .tag small { display: block; font-size: 10px; color: #8e4ec6; }
+  .duck-stk .quack { position: absolute; right: -6px; top: -4px; background: #fff; border: 2px solid #3b2412; color: #3b2412; font-size: 12px; padding: 2px 6px; opacity: 0; transform: translateY(6px) rotate(8deg); transition: .2s; }
+  .duck-stk:hover .quack { opacity: 1; transform: translateY(0) rotate(8deg); }
+  .duck-stk .peel { position: absolute; right: 16px; top: 8px; width: 16px; height: 16px; background: linear-gradient(225deg, transparent 50%, #e9e4f5 50%); box-shadow: -2px 2px 2px rgba(0,0,0,.3); }
+  @media (max-width: 600px) {
+    .duck-stk { width: 66px; top: -10px; left: -6px; }
+    .duck-stk .tag { font-size: 10px; padding: 2px 5px 3px; }
+    .duck-stk .tag small { font-size: 8px; }
+    .duck-stk .peel { width: 9px; height: 9px; right: 9px; top: 5px; }
+  }
 </style>
 </head>
 <body>
@@ -466,6 +483,7 @@
   <div class="hud"><span>DOBBI</span><span class="hud-r"><button class="p1-btn" id="p1Btn" type="button" hidden>1P LOGIN</button><span>GAMES <b id="cnt">02</b></span>
     <button class="qr-btn" id="qrBtn" type="button" aria-label="휴대폰으로 열기 (QR 코드)" title="휴대폰으로 열기"><canvas id="qrMini"></canvas><i>QR</i></button></span></div>
   <header>
+    <a class="duck-stk" href="https://dobbi52.github.io/duck-race/teacher.html" target="_blank" rel="noopener" title="오리 교실: 오리 레이스와 오리 뽑기 (선생님용)"><span class="quack">꽥!</span><canvas id="duckStk" width="36" height="34" aria-hidden="true"></canvas><span class="peel"></span><div class="tag">오리 교실<small>선생님용</small></div></a>
     <h1>생각 오락실</h1>
     <p class="ev-msg" id="evMsg"></p>
     <p class="press">PRESS START<span class="press-more"> · 궁금한 게임을 눌러 보세요</span></p>
@@ -922,6 +940,25 @@ const SPRITE = {
 })();
 
 render();
+</script>
+<script>
+(function(){
+  const cv=document.getElementById('duckStk');if(!cv)return;
+  const R=(c,x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h);};
+  const SP=["......kkkk...",".....kHHHHk..",".....kHHeHkkk",".....kHHHHbbk","kk...kHHHkkk.","kBk.kkBBBBk..","kBBkBBBBDDBk.","kBBBBBBDDDBk.",".kBBBBBBBBk..","..kkkkkkkk..."];
+  const P=['#ffd93d','#ffd93d','#e6a817','#f76b15'];
+  const mk=()=>{const c=document.createElement('canvas');c.width=36;c.height=34;return c;};
+  const a=mk(),ac=a.getContext('2d'),ox=9,oy=20;
+  SP.forEach((row,ry)=>{for(let rx=0;rx<13;rx++){const ch=row[rx];if(ch==='.')continue;R(ac,ox+rx,oy+ry,1,1,ch==='k'?'#3b2412':ch==='H'?P[0]:ch==='B'?P[1]:ch==='D'?P[2]:ch==='b'?P[3]:'#111');}});
+  const A=(dx,dy,w,h,col)=>R(ac,ox+dx,oy+dy,w,h,col);
+  /* 마법사 모자 (할로윈) */
+  A(3,1,10,1,'#3b2412');A(4,0,8,1,'#6b35b0');A(3,0,1,1,'#3b2412');A(12,0,1,1,'#3b2412');A(5,-1,6,1,'#8e4ec6');A(6,-2,5,1,'#8e4ec6');A(7,-3,3,1,'#8e4ec6');A(7,-4,2,1,'#8e4ec6');A(8,-5,2,1,'#8e4ec6');A(9,-6,2,1,'#8e4ec6');A(10,-7,1,1,'#3b2412');A(6,-1,1,1,'#ffe14d');A(8,-3,1,1,'#ffe14d');
+  const tint=(src,col)=>{const c=mk(),x=c.getContext('2d');x.drawImage(src,0,0);x.globalCompositeOperation='source-in';x.fillStyle=col;x.fillRect(0,0,36,34);return c;};
+  const w=tint(a,'#ffffff'),d=tint(a,'#3b2412'),sk=cv.getContext('2d');
+  for(let dx=-3;dx<=3;dx++)for(let dy=-3;dy<=3;dy++){if(dx*dx+dy*dy<=10)sk.drawImage(d,dx,dy);}
+  for(let dx=-2;dx<=2;dx++)for(let dy=-2;dy<=2;dy++){if(dx*dx+dy*dy<=5)sk.drawImage(w,dx,dy);}
+  sk.drawImage(a,0,0);
+})();
 </script>
 </body>
 </html>
