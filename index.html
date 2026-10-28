@@ -459,6 +459,15 @@
     .ev-halloween .ev-msg { font-size: 12px; }
     .pumpkins .px:nth-child(n+6) { display: none; }
   }
+  /* 오리 교실 입구 창 */
+  .duck-panel { padding-top: 40px; }
+  .duck-panel .start { font-size: 18px; }
+  .duck-stu { margin-top: 22px; padding: 16px 14px 14px; background: #0d0b20; border: 3px solid #3a3470; }
+  .duck-q { font-size: 14px; line-height: 1.6; color: #d9d4ff; }
+  .duck-row { display: flex; gap: 8px; margin-top: 12px; }
+  .duck-row input { flex: 1; min-width: 0; font: inherit; font-size: 26px; letter-spacing: .3em; text-align: center; padding: 8px; background: #1f1a45; color: #ffd84a; border: 3px solid #ffd84a; border-radius: 0; }
+  .duck-row button { font: inherit; font-size: 18px; font-weight: 700; padding: 0 18px; background: #5be3a8; color: #14112b; border: 0; box-shadow: 4px 4px 0 #0a0818; cursor: pointer; }
+  .duck-err { min-height: 18px; margin-top: 8px; font-size: 13px; color: #ff8fb1; }
   /* 오리 교실 스티커 */
   .duck-stk { position: absolute; left: 0; top: -18px; width: 118px; transform: rotate(-8deg); transition: transform .2s; text-decoration: none; z-index: 3; }
   .duck-stk:hover, .duck-stk:focus-visible { transform: rotate(-2deg) scale(1.06); }
@@ -482,7 +491,7 @@
   <div class="hud"><span>DOBBI</span><span class="hud-r"><button class="p1-btn" id="p1Btn" type="button" hidden>1P LOGIN</button><span>GAMES <b id="cnt">02</b></span>
     <button class="qr-btn" id="qrBtn" type="button" aria-label="휴대폰으로 열기 (QR 코드)" title="휴대폰으로 열기"><canvas id="qrMini"></canvas><i>QR</i></button></span></div>
   <header>
-    <a class="duck-stk" href="https://dobbi52.github.io/duck-race/teacher.html" target="_blank" rel="noopener" onclick="try{logStart('오리 교실')}catch(e){}" title="오리 교실: 오리 레이스와 오리 뽑기 (선생님용)"><span class="quack">꽥!</span><canvas id="duckStk" width="36" height="34" aria-hidden="true"></canvas><div class="tag">오리 교실<small>선생님용</small></div></a>
+    <a class="duck-stk" href="https://dobbi52.github.io/duck-race/teacher.html" target="_blank" rel="noopener" title="오리 교실: 오리 레이스와 오리 뽑기"><span class="quack">꽥!</span><canvas id="duckStk" width="36" height="34" aria-hidden="true"></canvas><div class="tag">오리 교실<small>선생님 · 학생</small></div></a>
     <h1>생각 오락실</h1>
     <p class="ev-msg" id="evMsg"></p>
     <p class="press">PRESS START<span class="press-more"> · 궁금한 게임을 눌러 보세요</span></p>
@@ -498,6 +507,19 @@
   </div>
 </div>
 <div id="flash"></div>
+<div class="dim" id="duckDim">
+  <div class="panel duck-panel" style="--c:#ffd84a" role="dialog" aria-modal="true" aria-labelledby="duckTitle">
+    <button class="x" id="duckClose" aria-label="닫기">✕</button>
+    <h2 id="duckTitle">오리 교실</h2>
+    <p class="kind">오리 레이스 · 오리 뽑기</p>
+    <a class="start" id="duckTeacher" href="https://dobbi52.github.io/duck-race/teacher.html" target="_blank" rel="noopener">선생님: 오리 교실 열기</a>
+    <div class="duck-stu">
+      <p class="duck-q">학생이에요? 선생님 화면에 보이는<br>방 번호 4자리를 넣어요</p>
+      <div class="duck-row"><input id="duckCode" inputmode="numeric" placeholder="0000" autocomplete="off" aria-label="방 번호 4자리"><button id="duckGo" type="button">입장</button></div>
+      <p class="duck-err" id="duckErr"></p>
+    </div>
+  </div>
+</div>
 <div class="dim" id="qrDim">
   <div class="panel qr-panel" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
     <button class="x" id="qrClose" aria-label="닫기">✕</button>
@@ -957,6 +979,24 @@ render();
   for(let dx=-3;dx<=3;dx++)for(let dy=-3;dy<=3;dy++){if(dx*dx+dy*dy<=10)sk.drawImage(d,dx,dy);}
   for(let dx=-2;dx<=2;dx++)for(let dy=-2;dy<=2;dy++){if(dx*dx+dy*dy<=5)sk.drawImage(w,dx,dy);}
   sk.drawImage(a,0,0);
+})();
+</script>
+<script>
+(function(){
+  const dim=document.getElementById('duckDim'),inp=document.getElementById('duckCode'),err=document.getElementById('duckErr');
+  const lg=n=>{try{logStart(n);}catch(e){}};
+  const open=()=>{err.textContent='';inp.value='';dim.classList.add('open');};
+  const close=()=>dim.classList.remove('open');
+  document.querySelector('.duck-stk').addEventListener('click',e=>{e.preventDefault();open();});
+  document.getElementById('duckClose').onclick=close;
+  dim.addEventListener('click',e=>{if(e.target===dim)close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&dim.classList.contains('open'))close();});
+  document.getElementById('duckTeacher').addEventListener('click',()=>{lg('오리 교실');close();});
+  inp.addEventListener('input',()=>{inp.value=inp.value.replace(/\D/g,'').slice(0,4);err.textContent='';});
+  const go=()=>{const c=inp.value.replace(/\D/g,'');if(c.length!==4){err.textContent='방 번호 네 자리를 넣어 주세요';inp.focus();return;}
+    lg('오리 레이스 입장');window.open('https://dobbi52.github.io/duck-race/?room='+c,'_blank','noopener');close();};
+  document.getElementById('duckGo').onclick=go;
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')go();});
 })();
 </script>
 </body>
