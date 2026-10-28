@@ -467,14 +467,13 @@
   .duck-stk canvas { display: block; width: 100%; image-rendering: pixelated; filter: drop-shadow(3px 4px 0 rgba(0,0,0,.45)); }
   .duck-stk .tag { position: relative; margin: -6px auto 0; width: max-content; background: #fff; border: 2px solid #3b2412; color: #3b2412; font-size: 13px; padding: 3px 10px 4px; text-align: center; line-height: 1.15; box-shadow: 3px 3px 0 rgba(0,0,0,.4); }
   .duck-stk .tag small { display: block; font-size: 10px; color: #8e4ec6; }
-  .duck-stk .quack { position: absolute; right: -6px; top: -4px; background: #fff; border: 2px solid #3b2412; color: #3b2412; font-size: 12px; padding: 2px 6px; opacity: 0; transform: translateY(6px) rotate(8deg); transition: .2s; }
+  .duck-stk .quack { position: absolute; left: 66%; top: 30%; white-space: nowrap; background: #fff; border: 2px solid #3b2412; color: #3b2412; font-size: 12px; padding: 2px 6px; opacity: 0; transform: translateY(6px) rotate(8deg); transition: .2s; }
   .duck-stk:hover .quack { opacity: 1; transform: translateY(0) rotate(8deg); }
-  .duck-stk .peel { position: absolute; right: 16px; top: 8px; width: 16px; height: 16px; background: linear-gradient(225deg, transparent 50%, #e9e4f5 50%); box-shadow: -2px 2px 2px rgba(0,0,0,.3); }
   @media (max-width: 600px) {
     .duck-stk { width: 66px; top: -10px; left: -6px; }
     .duck-stk .tag { font-size: 10px; padding: 2px 5px 3px; }
     .duck-stk .tag small { font-size: 8px; }
-    .duck-stk .peel { width: 9px; height: 9px; right: 9px; top: 5px; }
+    .duck-stk .quack { font-size: 9px; padding: 1px 3px; }
   }
 </style>
 </head>
@@ -483,7 +482,7 @@
   <div class="hud"><span>DOBBI</span><span class="hud-r"><button class="p1-btn" id="p1Btn" type="button" hidden>1P LOGIN</button><span>GAMES <b id="cnt">02</b></span>
     <button class="qr-btn" id="qrBtn" type="button" aria-label="휴대폰으로 열기 (QR 코드)" title="휴대폰으로 열기"><canvas id="qrMini"></canvas><i>QR</i></button></span></div>
   <header>
-    <a class="duck-stk" href="https://dobbi52.github.io/duck-race/teacher.html" target="_blank" rel="noopener" title="오리 교실: 오리 레이스와 오리 뽑기 (선생님용)"><span class="quack">꽥!</span><canvas id="duckStk" width="36" height="34" aria-hidden="true"></canvas><span class="peel"></span><div class="tag">오리 교실<small>선생님용</small></div></a>
+    <a class="duck-stk" href="https://dobbi52.github.io/duck-race/teacher.html" target="_blank" rel="noopener" title="오리 교실: 오리 레이스와 오리 뽑기 (선생님용)"><span class="quack">꽥!</span><canvas id="duckStk" width="36" height="34" aria-hidden="true"></canvas><div class="tag">오리 교실<small>선생님용</small></div></a>
     <h1>생각 오락실</h1>
     <p class="ev-msg" id="evMsg"></p>
     <p class="press">PRESS START<span class="press-more"> · 궁금한 게임을 눌러 보세요</span></p>
