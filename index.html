@@ -462,6 +462,44 @@
     .ev-halloween .ev-msg { font-size: 12px; }
     .pumpkins .px:nth-child(n+6) { display: none; }
   }
+  /* 가을 */
+  body.ev-autumn {
+    background:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px) 0 0 / 24px 24px,
+      radial-gradient(ellipse 90% 45% at 50% 108%, rgba(255, 140, 50, .32), transparent 70%) fixed,
+      linear-gradient(#1a1030, #2e1636 50%, #4a1e26) fixed;
+  }
+  .ev-autumn h1 { color: #ffc24a; text-shadow: 4px 4px 0 #c2410c, 8px 8px 0 #3a1408; }
+  .ev-autumn .ev-msg {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-top: 10px; font-size: 15px; font-weight: 700; letter-spacing: .12em; color: #ffb547;
+    text-shadow: 0 0 8px rgba(255, 150, 50, .6);
+  }
+  .ev-autumn .ev-msg .px { width: 20px; height: 20px; animation: sway 2.4s ease-in-out infinite; }
+  .ev-autumn .ev-msg .px:last-child { animation-delay: -1.2s; }
+  @keyframes sway { 50% { transform: rotate(-14deg); } }
+  .leaf { position: absolute; top: -40px; width: var(--s); height: var(--s); opacity: .85; animation: fall var(--d) linear infinite; animation-delay: var(--delay); }
+  .leaf .px { width: 100%; height: 100%; animation: spin calc(var(--d) / 4) ease-in-out infinite alternate; }
+  @keyframes fall {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(40px, 27vh); }
+    50% { transform: translate(-10px, 55vh); }
+    75% { transform: translate(45px, 82vh); }
+    100% { transform: translate(0, calc(100vh + 60px)); }
+  }
+  @keyframes spin { from { transform: rotate(-35deg); } to { transform: rotate(35deg); } }
+  .ev-autumn .pumpkins { display: flex; justify-content: center; gap: 4px; margin: 36px 0 -10px; }
+  .ev-autumn .pumpkins .px { width: 26px; height: 26px; animation: none; }
+  .ev-autumn .pumpkins .px:nth-child(3n) { transform: rotate(40deg); }
+  .ev-autumn .pumpkins .px:nth-child(3n+1) { transform: rotate(-25deg) translateY(3px); }
+  @media (max-width: 899px) {
+    .ev-autumn .ev-msg { font-size: 12px; }
+    .ev-autumn .pumpkins .px { width: 20px; height: 20px; }
+    .ev-autumn .pumpkins .px:nth-child(-n+12) { display: block; }
+    .ev-autumn .pumpkins .px:nth-child(n+13) { display: none; }
+    .leaf:nth-child(n+7) { display: none; }
+  }
   /* 꽥꽥 교실 입구 창 */
   .duck-panel { padding-top: 40px; }
   .duck-panel .start { font-size: 18px; }
@@ -905,6 +943,7 @@ if (AA) {
 // ▼ 이벤트 배경: 기간 안에만 저절로 켜져요. (미리 보기: 주소 끝에 ?event=halloween)
 const EVENTS = [
   { id: "halloween", from: "2026-10-23", to: "2026-10-31" },
+  { id: "autumn", from: "2026-11-01", to: "2026-11-30" },
 ];
 function pixelSVG(map, colors) {
   const h = map.length, w = map[0].length;
@@ -913,6 +952,34 @@ function pixelSVG(map, colors) {
   return `<svg class="px" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">${r}</svg>`;
 }
 const SPRITE = {
+  maple: pixelSVG([
+    "....R....",
+    "..R.R.R..",
+    "..RRDRR..",
+    "RRRRDRRRR",
+    ".RRDDDRR.",
+    "..RRDRR..",
+    ".RRR.RRR.",
+    "....B....",
+    "....B...."], { R: "#e8452c", D: "#b8301f", B: "#7a3b1a" }),
+  maple2: pixelSVG([
+    "....R....",
+    "..R.R.R..",
+    "..RRDRR..",
+    "RRRRDRRRR",
+    ".RRDDDRR.",
+    "..RRDRR..",
+    ".RRR.RRR.",
+    "....B....",
+    "....B...."], { R: "#ff8a1f", D: "#d9620b", B: "#7a3b1a" }),
+  ginkgo: pixelSVG([
+    "YYYY.YYYY",
+    "YYYY.YYYY",
+    "YYYyYyYYY",
+    ".YYYyYYY.",
+    "...YyY...",
+    "....B....",
+    "....B...."], { Y: "#ffd23f", y: "#e0a92a", B: "#8a6a1a" }),
   pumpkin: pixelSVG([
     ".....GG....",
     "....GG.....",
@@ -961,6 +1028,16 @@ const SPRITE = {
     $("evMsg").innerHTML = `${SPRITE.pumpkin}HAPPY HALLOWEEN${SPRITE.pumpkin}`;
     $("evRow").innerHTML = SPRITE.pumpkin.repeat(9);
   }
+  if (ev.id === "autumn") {
+    const layer = document.createElement("div");
+    layer.className = "ev-layer"; layer.setAttribute("aria-hidden", "true");
+    const kinds = ["maple", "ginkgo", "maple2"];
+    layer.innerHTML = [[6, 16, 0, 26], [22, 21, -7, 20], [38, 18, -12, 24], [55, 23, -3, 18], [72, 17, -9, 26], [88, 20, -15, 22], [14, 24, -18, 18], [47, 19, -5, 22], [64, 22, -14, 20], [95, 18, -2, 24]]
+      .map(([left, d, delay, size], i) => `<div class="leaf" style="left:${left}%;--d:${d}s;--delay:${delay}s;--s:${size}px">${SPRITE[kinds[i % 3]]}</div>`).join("");
+    document.body.prepend(layer);
+    $("evMsg").innerHTML = `${SPRITE.maple}HELLO, AUTUMN${SPRITE.ginkgo}`;
+    $("evRow").innerHTML = Array.from({ length: 18 }, (_, i) => SPRITE[kinds[i % 3]]).join("");
+  }
 })();
 
 render();
@@ -975,8 +1052,13 @@ render();
   const a=mk(),ac=a.getContext('2d'),ox=9,oy=20;
   SP.forEach((row,ry)=>{for(let rx=0;rx<13;rx++){const ch=row[rx];if(ch==='.')continue;R(ac,ox+rx,oy+ry,1,1,ch==='k'?'#3b2412':ch==='H'?P[0]:ch==='B'?P[1]:ch==='D'?P[2]:ch==='b'?P[3]:'#111');}});
   const A=(dx,dy,w,h,col)=>R(ac,ox+dx,oy+dy,w,h,col);
-  /* 마법사 모자 (할로윈) */
+  const ev=(document.body.className.match(/ev-(\w+)/g)||[]).map(c=>c.slice(3)).find(c=>c!=='on');
+  if(ev==='halloween'){ /* 마법사 모자 (할로윈) */
   A(3,1,10,1,'#3b2412');A(4,0,8,1,'#6b35b0');A(3,0,1,1,'#3b2412');A(12,0,1,1,'#3b2412');A(5,-1,6,1,'#8e4ec6');A(6,-2,5,1,'#8e4ec6');A(7,-3,3,1,'#8e4ec6');A(7,-4,2,1,'#8e4ec6');A(8,-5,2,1,'#8e4ec6');A(9,-6,2,1,'#8e4ec6');A(10,-7,1,1,'#3b2412');A(6,-1,1,1,'#ffe14d');A(8,-3,1,1,'#ffe14d');
+  } else if(ev==='autumn'){ /* 목도리 (가을) */
+    A(5,4,6,1,'#d9452b');A(6,4,1,1,'#ffb547');A(8,4,1,1,'#ffb547');A(10,4,1,1,'#ffb547');
+    A(5,5,2,2,'#d9452b');A(5,6,2,1,'#ffb547');
+  }
   const tint=(src,col)=>{const c=mk(),x=c.getContext('2d');x.drawImage(src,0,0);x.globalCompositeOperation='source-in';x.fillStyle=col;x.fillRect(0,0,36,34);return c;};
   const w=tint(a,'#ffffff'),d=tint(a,'#3b2412'),sk=cv.getContext('2d');
   for(let dx=-3;dx<=3;dx++)for(let dy=-3;dy<=3;dy++){if(dx*dx+dy*dy<=10)sk.drawImage(d,dx,dy);}
