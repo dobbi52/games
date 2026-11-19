@@ -877,8 +877,11 @@ if (STATS_URL) {
   $("score").hidden = false;
   let first = true;                                     // 이 기기에서 오늘 처음 열었는지
   try { first = localStorage.getItem("visitDay") !== kstDay(); localStorage.setItem("visitDay", kstDay()); } catch (e) {}
-  fetch(STATS_URL + "?action=visit&first=" + (first ? 1 : 0))
-    .then(r => r.json()).then(showStats).catch(() => {});
+  // 접속이 몰려 숫자를 못 받으면 조금 쉬었다가 다시 받아 와요 (다시 받을 땐 방문을 또 세지 않아요)
+  const getStats = (q, left) => fetch(STATS_URL + q).then(r => r.json())
+    .then(d => { if (!d || typeof d.today !== "number") throw 0; showStats(d); })
+    .catch(() => { if (left > 0) setTimeout(() => getStats("?action=read", left - 1), 1500 * (3 - left)); });
+  getStats("?action=visit&first=" + (first ? 1 : 0), 2);
 }
 function logStart(name) {
   if (!STATS_URL) return;
