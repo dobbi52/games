@@ -527,8 +527,6 @@
   .snowcap { position: absolute; left: -4px; top: -22px; width: calc(100% + 8px); height: 18px; z-index: 1; pointer-events: none; image-rendering: pixelated; }
   .ev-winter .cab .no { z-index: 3; }
   .ev-winter .badges { z-index: 3; }
-  .snowfall { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
-  @media (min-width: 900px) { .ev-winter .flake { display: none; } }   /* 컴퓨터는 쌓이는 눈(캔버스)으로 */
   /* 가을 */
   body.ev-autumn {
     background:
@@ -1173,20 +1171,17 @@ const SPRITE = {
     "XXXXXXXXX",
     "X.XX.XX.X"], { X: "#ece9ff", E: "#1a0f2e", M: "#ff8ab0" }),
 };
-// ▼ 겨울: 카드 윗변에 눈 쌓기 (휴대폰: 처음부터 쌓여 있음 / 컴퓨터: 떨어지는 눈이 닿으면 조금씩 쌓임)
+// ▼ 겨울: 카드 윗변에 눈이 살짝 쌓여 있게 하기 (카드마다 모양이 조금씩 달라요)
 function snowPile(layer) {
-  const U = 2, H = 9, MAX = 8;                       // 눈 한 칸 = 2px, 캔버스 높이 9칸, 최대 8칸
+  const U = 2, H = 9;                                // 눈 한 칸 = 2px, 캔버스 높이 9칸
   const wide = matchMedia("(min-width: 900px)");
   const piles = {};                                  // 카드별 눈 높이 (탭을 바꿔도 유지)
   const keyOf = c => c.dataset.i != null ? "g" + c.dataset.i : "s" + c.style.getPropertyValue("--n");
   const rnd = seed => () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
   function startPile(n, k) {
     const r = rnd(k.split("").reduce((a, ch) => a + ch.charCodeAt(0), 7) * 31);
-    if (!wide.matches) {                             // 휴대폰: 가운데가 볼록한 눈더미
-      const peak = 3 + Math.round(r() * 2);
-      return Array.from({ length: n }, (_, x) => Math.max(1, Math.round(1 + peak * Math.pow(Math.sin(Math.PI * (x + .5) / n), .7) + (r() - .5) * 1.4)));
-    }
-    return Array.from({ length: n }, () => (r() < .3 ? 2 : 1));      // 컴퓨터: 얇게 덮인 채로 시작
+    const peak = 3 + Math.round(r() * 2);           // 가운데가 볼록한 눈더미
+    return Array.from({ length: n }, (_, x) => Math.max(1, Math.round(1 + peak * Math.pow(Math.sin(Math.PI * (x + .5) / n), .7) + (r() - .5) * 1.4)));
   }
   function draw(cap, h) {
     const g = cap.getContext("2d");
@@ -1198,14 +1193,6 @@ function snowPile(layer) {
       g.fillStyle = "#a9cdee"; g.fillRect(x, H - 1, 1, 1);
     });
   }
-  function settle(h) {                               // 너무 가파른 곳은 옆으로 흘러내리기
-    for (let pass = 0; pass < 3; pass++) for (let x = 0; x < h.length; x++) {
-      const edge = Math.min(x, h.length - 1 - x);
-      const lim = Math.min(MAX, 2 + edge);           // 양끝은 낮게
-      if (h[x] > lim) { h[x]--; if (x > 0) h[x - 1]++; else if (x < h.length - 1) h[x + 1]++; }
-      for (const d of [-1, 1]) { const y = x + d; if (y >= 0 && y < h.length && h[x] - h[y] > 1) { h[x]--; h[y]++; } }
-    }
-  }
   function attach() {
     document.querySelectorAll("#list .cab").forEach(c => {
       let cap = c.querySelector(".snowcap");
@@ -1215,11 +1202,9 @@ function snowPile(layer) {
       const k = keyOf(c);
       let h = piles[k];
       if (!h || h.length !== n) {                    // 처음이거나 카드 폭이 바뀌면 새로 맞추기
-        const old = h; h = startPile(n, k);
-        if (old && wide.matches) h = h.map((v, x) => Math.max(v, old[Math.floor(x * old.length / n)] || 0));
-        piles[k] = h;
+        h = piles[k] = startPile(n, k);
       }
-      cap.width = n; c._snow = { cap, h };
+      cap.width = n;
       draw(cap, h);
     });
   }
@@ -1228,42 +1213,6 @@ function snowPile(layer) {
   wide.addEventListener("change", () => { for (const k in piles) delete piles[k]; attach(); });
   attach();
 
-  // 컴퓨터: 캔버스에 눈을 떨어뜨리고, 카드 윗변에 닿으면 그 자리에 쌓기
-  const cv = document.createElement("canvas"); cv.className = "snowfall"; layer.appendChild(cv);
-  const g = cv.getContext("2d");
-  const flakes = [];
-  const spawn = top => ({ x: Math.random() * innerWidth, y: top ? -10 : Math.random() * innerHeight, vy: .45 + Math.random() * .55, sway: Math.random() * 6.28, big: Math.random() < .35 });
-  for (let i = 0; i < 64; i++) flakes.push(spawn(false));
-  let last = performance.now();
-  function frame(now) {
-    requestAnimationFrame(frame);
-    if (!wide.matches || document.hidden) { if (cv.width) { cv.width = 0; } last = now; return; }
-    const dt = Math.min(3, (now - last) / 16.7); last = now;
-    if (cv.width !== innerWidth || cv.height !== innerHeight) { cv.width = innerWidth; cv.height = innerHeight; }
-    g.clearRect(0, 0, cv.width, cv.height);
-    const cards = [...document.querySelectorAll("#list .cab")].filter(c => c._snow).map(c => ({ c, r: c.getBoundingClientRect() })).filter(o => o.r.bottom > 0 && o.r.top < innerHeight);
-    for (let i = 0; i < flakes.length; i++) {
-      const f = flakes[i];
-      const py = f.y;
-      f.sway += .02 * dt; f.y += f.vy * dt; f.x += Math.sin(f.sway) * .35 * dt;
-      let landed = false;
-      for (const { c, r } of cards) {
-        const L = r.left - 4, W = r.width + 8;
-        if (f.x < L || f.x >= L + W) continue;
-        const s = c._snow, col = Math.floor((f.x - L) / U), surf = r.top - 4 - (s.h[col] || 0) * U;
-        if (py < surf && f.y >= surf) {
-          for (let d = -6; d <= 6; d++) { const x = col + d; if (x >= 0 && x < s.h.length && Math.random() < [1, 1, 1, .85, .6, .35, .15][Math.abs(d)]) s.h[x]++; }
-          settle(s.h); draw(s.cap, s.h); landed = true; break;
-        }
-      }
-      if (landed || f.y > innerHeight + 10) { flakes[i] = spawn(true); continue; }
-      g.fillStyle = "rgba(234,246,255,.9)";
-      const X = Math.round(f.x), Y = Math.round(f.y);
-      if (f.big) { g.fillRect(X - 1, Y - 3, 2, 6); g.fillRect(X - 3, Y - 1, 6, 2); g.fillRect(X - 3, Y - 3, 2, 2); g.fillRect(X + 1, Y - 3, 2, 2); g.fillRect(X - 3, Y + 1, 2, 2); g.fillRect(X + 1, Y + 1, 2, 2); }
-      else g.fillRect(X - 1, Y - 1, 3, 3);
-    }
-  }
-  requestAnimationFrame(frame);
 }
 (function startEvent() {
   const q = new URLSearchParams(location.search).get("event");
